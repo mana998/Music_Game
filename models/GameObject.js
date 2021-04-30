@@ -12,4 +12,7 @@ class GameObject {
         this.img = img;
     }
 
+    draw(ctx) {
+        this.img.draw(ctx, x, y, width, height);
+    }
 }
