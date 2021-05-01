@@ -63,15 +63,15 @@ function draw(data) {
     //draw objects
     //draw each player
     data.players.map(passedPlayer => {
-        passedPlayer = new Player(player.x, player.y, player.width, player.height, player.username, 
-            new Img(player.img.src, player.img.startRow, player.img.startColumn, player.img.rows, player.img.columns, player.img.speed, '', player.img.currentRow, player.img.currentColumn)
+        passedPlayer = new Player(passedPlayer.x, passedPlayer.y, passedPlayer.width, passedPlayer.height, passedPlayer.username, 
+            new Img(passedPlayer.img.src, passedPlayer.img.startRow, passedPlayer.img.startColumn, passedPlayer.img.rows, passedPlayer.img.columns, passedPlayer.img.speed, '', passedPlayer.img.currentRow, passedPlayer.img.currentColumn)
         );
         //make all players on the bottom even on different sized screens
         passedPlayer.y = window.innerHeight - characterHeight;
         passedPlayer.draw(ctx);
         if (player.username === passedPlayer.username) {
             player = passedPlayer;
-            socket.emit("client update", {player: player});
+            //socket.emit("client update", {player: player});
         }
     });
 }
@@ -103,4 +103,8 @@ function move(e) {
 //change animation to standing
 function stop() {
 
+}
+
+function updateServer() {
+    socket.emit("client update", {player: player});
 }
