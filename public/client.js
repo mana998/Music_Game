@@ -12,6 +12,11 @@ let player;
 const characterWidth = 32;
 const characterHeight = 32;
 
+//left, right, middle animation values
+let left;
+let right;
+let middle;
+
 window.addEventListener("load",() => {
     //set size of canvas to fullscreen
     canvas.width = window.innerWidth;
@@ -28,17 +33,20 @@ window.addEventListener("resize",() => {
 
 //setup new game
 function setup() {
-    console.log("setup");
     //select img
     let img = new Image();
     img.src = "./images/character/bard.png";
+    let initial = new Img("./images/character/bard.png", 2, 0, 0, 2, 1);
+    right = [2, 0];
+    left = [1, 0];
+    middle = [0, 1]; 
     //temporary unique username
     let username = Math.random(50)*10;
     player = new Player(
         window.innerWidth/2, window.innerHeight - characterHeight, 
         32, 32,
         username,
-        new Img("./images/character/bard.png", 2, 0, 0, 2, 1)
+        initial
     );
     //send data to the server
     socket.emit("client new player", {player: player});
@@ -84,27 +92,42 @@ window.addEventListener("keyup", stop);
 //change animation
 function move(e) {
     //move player
+    let moved = true;
     switch(e.key) {
         case "A":
         case "a":
         case "ArrowLeft":
+            switchImage("start", left);
             player.x -= 1 * player.speed;
             break;
         case "D":
         case "d":
         case "ArrowRight":
+            switchImage("start", right);
             player.x += 1 * player.speed;
             break;
+        default: 
+            //prevent unnecessary updates
+            moved = false;
     }
     //update server
-    socket.emit("client update", {player: player});
+    if (moved) updateServer();
 }
 
 //change animation to standing
 function stop() {
-
+    switchImage("start", middle);
+    switchImage("current", middle);
+    updateServer();
 }
 
+//send player update
 function updateServer() {
     socket.emit("client update", {player: player});
+}
+
+//update spreadsheet values
+function switchImage(value, array){
+    player.img[`${value}Row`] = array[0];
+    player.img[`${value}Column`] = array[1];
 }
