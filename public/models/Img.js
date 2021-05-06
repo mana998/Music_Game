@@ -2,8 +2,12 @@ class Img {
     constructor (src, startRow, startColumn, rows, columns, speed, size, currentRow, currentColumn) {
         //src img
         this.src = src
-        this.img = new Image();
-        this.img.src = src;
+        if (typeof exports !== 'undefined'&& typeof module !== 'undefined' && module.exports) {
+            this.img = `<img src="${src}">`;
+        } else {
+            this.img = new Image();
+            this.img.src = src;
+        }
         //start position on stylesheet
         this.startRow = startRow;
         this.startColumn = startColumn;
@@ -40,3 +44,5 @@ class Img {
     }
 
 }
+
+if (typeof exports !== 'undefined'&& typeof module !== 'undefined' && module.exports) module.exports = {Img};

@@ -19,8 +19,15 @@ app.get("/", (req, res) => {
 
 //import game classes
 const Game = require("./private/models/Game").Game;
+const UtilsObject = require("./private/models/Utils").Utils;
 
 let gameState = new Game();
+const Utils = new UtilsObject();
+
+//collectible items
+//initialize for 1st level
+//hardcoded for now
+let collectibles = gameState.generateCollectibles({hints: ["first", "second"]});
 
 io.on("connection", (socket) => {
 
@@ -47,8 +54,39 @@ io.on("connection", (socket) => {
         //replace with new data
         gameState.players[gameState.players.indexOf(player)] = data.player;
     })
+
+    socket.on("start collecting", (data) => {
+        //send amount of collectibles to client
+        console.log("start");
+        console.log(collectibles.length);
+        io.emit("collectibles amount", {amount: collectibles.length});
+        //recursively generate collectibles
+        generateCollectible(socket);
+    });
+
+    socket.on("no collectibles left", (data) => {
+        //console.log("next");
+        gameState.stage = "guess";
+    })
 })
 
+async function generateCollectible(socket) {
+    let item = collectibles.shift();
+    //console.log(collectibles.length);
+    //set custom timeout for each collectible
+    //console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
+    //max wait limit is 30 sec
+    //min limit depends on level
+    let random = Utils.getRandomNumber(10 / gameState.level, 30)*1000;
+    //console.log(random);
+    await new Promise(resolve => setTimeout(resolve, random));
+    //console.log("item", item);
+    socket.emit("new collectible", {collectible: item});
+    if (collectibles.length) {
+        generateCollectible(socket);
+    }
+    return item;
+}
 
 
 

@@ -8,6 +8,9 @@ const ctx = canvas.getContext("2d");
 //current player
 let player;
 
+//amount of collectibles per round
+let collectiblesAmount;
+
 //spritesheet information
 const characterWidth = 32;
 const characterHeight = 32;
@@ -16,6 +19,8 @@ const characterHeight = 32;
 let left;
 let right;
 let middle;
+
+let collectibles = [];
 
 window.addEventListener("load",() => {
     //set size of canvas to fullscreen
@@ -56,6 +61,7 @@ function setup() {
 socket.on('server new player', (data) => {
     //console.log(data);
     console.log(player.username);
+    socket.emit("start collecting", {});
 });
 
 //draw game state
@@ -64,11 +70,15 @@ socket.on('gameState change', (data) => {
     draw(data);
 });
 
+//set collectible amount
+socket.on('collectibles amount', (data) => {
+    collectiblesAmount = data.amount;
+});
+
 //draw everything
 function draw(data) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     //draw background
-    //draw objects
     //draw each player
     data.players.map(passedPlayer => {
         passedPlayer = new Player(passedPlayer.x, passedPlayer.y, passedPlayer.width, passedPlayer.height, passedPlayer.username, 
@@ -82,6 +92,38 @@ function draw(data) {
             //socket.emit("client update", {player: player});
         }
     });
+    //draw objects
+    drawCollectibles();
+}
+
+socket.on("new collectible", (data) => {
+    //change x position to match screen size
+    data.collectible.x = window.innerWidth * data.collectible.x;
+    let collectible = new Collectible(data.collectible.x, data.collectible.y, data.collectible.width, data.collectible.height, 
+        new Img(data.collectible.img.src, data.collectible.img.startRow, data.collectible.img.startColumn, data.collectible.img.rows, data.collectible.img.columns, data.collectible.img.speed),
+        data.collectible.speed, data.collectible.type, data.collectible.value)
+    ;
+    collectibles.push(collectible);
+    console.log("new", collectibles);
+    console.log("one", collectible);
+});
+
+function drawCollectibles() {
+    let length = collectibles.length;
+    if (length) {
+        collectibles.map(collectible => {
+            collectible.y += collectible.speed;
+            collectible.draw(ctx);
+        });
+        collectibles = collectibles.filter(collectible => collectible.y <= window.innerHeight)
+        if (collectibles.length < length) {
+            collectiblesAmount -= length - collectibles.length;
+        }
+        if (collectiblesAmount === 0) {
+            socket.emit("no collectibles left", {});
+        }
+    }
+    //console.log("collcetibles amount", collectiblesAmount)
 }
 
 //move
@@ -126,8 +168,8 @@ function updateServer() {
     socket.emit("client update", {player: player});
 }
 
-//update spreadsheet values
+/*//update spreadsheet values
 function switchImage(value, array){
     player.img[`${value}Row`] = array[0];
     player.img[`${value}Column`] = array[1];
-}
+}*/

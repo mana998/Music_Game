@@ -17,3 +17,5 @@ class GameObject {
     }
     
 }
+
+if (typeof exports !== 'undefined'&& typeof module !== 'undefined' && module.exports) module.exports = {GameObject};
