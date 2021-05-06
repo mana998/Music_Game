@@ -12,3 +12,9 @@ class Player extends GameObject{
     }
 
 }
+
+//update spreadsheet values
+function switchImage(value, array){
+    player.img[`${value}Row`] = array[0];
+    player.img[`${value}Column`] = array[1];
+}
