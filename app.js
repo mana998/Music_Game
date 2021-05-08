@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
         gameState.players.push(data.player);
         //player.draw();
         if (!gameState.on) gameState.on = true;
-        socket.emit("server new player", {player: "new player added"});
+        socket.emit("server new player", {state: gameState.state});
     })
 
     //player update
@@ -52,6 +52,7 @@ io.on("connection", (socket) => {
         //find player with same username
         let player = gameState.players.find(player => player.username === data.player.username);
         //replace with new data
+        //console.log(player);
         gameState.players[gameState.players.indexOf(player)] = data.player;
     })
 
@@ -59,9 +60,10 @@ io.on("connection", (socket) => {
         //send amount of collectibles to client
         console.log("start");
         console.log(collectibles.length);
+        gameState.stage = "collect";
         io.emit("collectibles amount", {amount: collectibles.length});
         //recursively generate collectibles
-        generateCollectible(socket);
+        generateCollectible();
     });
 
     socket.on("no collectibles left", (data) => {
@@ -70,7 +72,7 @@ io.on("connection", (socket) => {
     })
 })
 
-async function generateCollectible(socket) {
+async function generateCollectible() {
     let item = collectibles.shift();
     //console.log(collectibles.length);
     //set custom timeout for each collectible
@@ -81,9 +83,9 @@ async function generateCollectible(socket) {
     //console.log(random);
     await new Promise(resolve => setTimeout(resolve, random));
     //console.log("item", item);
-    socket.emit("new collectible", {collectible: item});
+    io.emit("new collectible", {collectible: item});
     if (collectibles.length) {
-        generateCollectible(socket);
+        generateCollectible();
     }
     return item;
 }

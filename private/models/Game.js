@@ -36,12 +36,12 @@ class Game {
                 amount /= 10;
             }
             for (let i = 0; i < amount; i++) {
-                collectibles.push(new Collectible(Math.random(), -CollectibleHeight, CollectibleWidth, CollectibleHeight, value, Utils.getRandomNumber(1, this.level), key))
+                collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, value, Utils.getRandomNumber(1, this.level), key))
             }
         }
         //add hints
         song.hints.map((arrayHint) => {
-            collectibles.push(new Collectible(Math.random(), -CollectibleHeight, CollectibleWidth, CollectibleHeight, hint, Utils.getRandomNumber(1, this.level), "hint", arrayHint));
+            collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, hint, Utils.getRandomNumber(1, this.level), "hint", arrayHint));
         })
         Utils.shuffleArray(collectibles);
         //console.log(collectibles);

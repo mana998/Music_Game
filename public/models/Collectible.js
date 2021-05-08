@@ -1,5 +1,5 @@
 
-if (typeof exports !== 'undefined'&& typeof module !== 'undefined' && module.exports) GameObject = require("../../public/models/GameObject").GameObject;
+if (typeof exports !== 'undefined' && typeof module !== 'undefined' && module.exports) GameObject = require("../../public/models/GameObject").GameObject;
 
 class Collectible extends GameObject {
     constructor (x, y, width, height, img, speed, type, value) {

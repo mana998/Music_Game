@@ -23,17 +23,15 @@ let middle;
 let collectibles = [];
 
 window.addEventListener("load",() => {
-    //set size of canvas to fullscreen
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    //reposition canvas to center
+    reposition();
     //start the game on load
     setup();
 });
 
 window.addEventListener("resize",() => {
-    //set size of canvas to fullscreen
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    //reposition canvas to center
+    reposition();
 });
 
 //setup new game
@@ -48,7 +46,7 @@ function setup() {
     //temporary unique username
     let username = Math.random(50)*10;
     player = new Player(
-        window.innerWidth/2, window.innerHeight - characterHeight, 
+        canvas.width/2, canvas.height - characterHeight, 
         32, 32,
         username,
         initial
@@ -61,12 +59,18 @@ function setup() {
 socket.on('server new player', (data) => {
     //console.log(data);
     console.log(player.username);
-    socket.emit("start collecting", {});
+    //start new game only if 1 player present
+    if (data.state !== "collect") {
+        socket.emit("start collecting", {});
+    }
 });
 
 //draw game state
 socket.on('gameState change', (data) => {
-    //console.log("gamestate");
+    //console.log("gamestate", data);
+    /*if(data.players.length > 1) {
+        console.log(data.players);
+    }*/
     draw(data);
 });
 
@@ -78,15 +82,16 @@ socket.on('collectibles amount', (data) => {
 //draw everything
 function draw(data) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //detect collision
+    collectibles = player.detectCollisions(collectibles, data.players);
     //draw background
     //draw each player
     data.players.map(passedPlayer => {
         passedPlayer = new Player(passedPlayer.x, passedPlayer.y, passedPlayer.width, passedPlayer.height, passedPlayer.username, 
             new Img(passedPlayer.img.src, passedPlayer.img.startRow, passedPlayer.img.startColumn, passedPlayer.img.rows, passedPlayer.img.columns, passedPlayer.img.speed, '', passedPlayer.img.currentRow, passedPlayer.img.currentColumn)
         );
-        //make all players on the bottom even on different sized screens
-        passedPlayer.y = window.innerHeight - characterHeight;
         passedPlayer.draw(ctx);
+        //console.log(passedPlayer);
         if (player.username === passedPlayer.username) {
             player = passedPlayer;
             //socket.emit("client update", {player: player});
@@ -97,15 +102,11 @@ function draw(data) {
 }
 
 socket.on("new collectible", (data) => {
-    //change x position to match screen size
-    data.collectible.x = window.innerWidth * data.collectible.x;
     let collectible = new Collectible(data.collectible.x, data.collectible.y, data.collectible.width, data.collectible.height, 
         new Img(data.collectible.img.src, data.collectible.img.startRow, data.collectible.img.startColumn, data.collectible.img.rows, data.collectible.img.columns, data.collectible.img.speed),
         data.collectible.speed, data.collectible.type, data.collectible.value)
     ;
     collectibles.push(collectible);
-    console.log("new", collectibles);
-    console.log("one", collectible);
 });
 
 function drawCollectibles() {
@@ -141,12 +142,16 @@ function move(e) {
         case "ArrowLeft":
             switchImage("start", left);
             player.x -= 1 * player.speed;
+            console.log("x",player.x);
+            console.log("speed",player.speed);
             break;
         case "D":
         case "d":
         case "ArrowRight":
             switchImage("start", right);
             player.x += 1 * player.speed;
+            console.log("x",player.x);
+            console.log("speed",player.speed);
             break;
         default: 
             //prevent unnecessary updates
@@ -168,8 +173,6 @@ function updateServer() {
     socket.emit("client update", {player: player});
 }
 
-/*//update spreadsheet values
-function switchImage(value, array){
-    player.img[`${value}Row`] = array[0];
-    player.img[`${value}Column`] = array[1];
-}*/
+function reposition() {
+    console.log("reposition");
+}
