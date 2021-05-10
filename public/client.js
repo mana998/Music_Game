@@ -82,8 +82,10 @@ socket.on('collectibles amount', (data) => {
 //draw everything
 function draw(data) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //detect collision
-    collectibles = player.detectCollisions(collectibles, data.players);
+    //detect collisions
+    //console.log("det", player);
+    collectibles = player.detectCollisions(collectibles);
+    //if (result) console.log("ehm", result);
     //draw background
     //draw each player
     data.players.map(passedPlayer => {
@@ -120,11 +122,11 @@ function drawCollectibles() {
         if (collectibles.length < length) {
             collectiblesAmount -= length - collectibles.length;
         }
-        if (collectiblesAmount === 0) {
-            socket.emit("no collectibles left", {});
-        }
     }
     //console.log("collcetibles amount", collectiblesAmount)
+    if (collectiblesAmount === 0) {
+        socket.emit("no collectibles left", {});
+    }
 }
 
 //move
@@ -142,16 +144,16 @@ function move(e) {
         case "ArrowLeft":
             switchImage("start", left);
             player.x -= 1 * player.speed;
-            console.log("x",player.x);
-            console.log("speed",player.speed);
+            //console.log("x",player.x);
+            //console.log("speed",player.speed);
             break;
         case "D":
         case "d":
         case "ArrowRight":
             switchImage("start", right);
             player.x += 1 * player.speed;
-            console.log("x",player.x);
-            console.log("speed",player.speed);
+            //console.log("x",player.x);
+            //console.log("speed",player.speed);
             break;
         default: 
             //prevent unnecessary updates

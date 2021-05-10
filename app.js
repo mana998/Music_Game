@@ -28,6 +28,7 @@ const Utils = new UtilsObject();
 //initialize for 1st level
 //hardcoded for now
 let collectibles = gameState.generateCollectibles({hints: ["first", "second"]});
+let currentColletibles = [];
 
 io.on("connection", (socket) => {
 
@@ -67,7 +68,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("no collectibles left", (data) => {
-        //console.log("next");
+        console.log("next");
         gameState.stage = "guess";
     })
 })
@@ -83,11 +84,12 @@ async function generateCollectible() {
     //console.log(random);
     await new Promise(resolve => setTimeout(resolve, random));
     //console.log("item", item);
+    currentColletibles.push(item);
     io.emit("new collectible", {collectible: item});
     if (collectibles.length) {
         generateCollectible();
     }
-    return item;
+    //return item;
 }
 
 
