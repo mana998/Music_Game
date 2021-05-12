@@ -38,6 +38,7 @@ class Player extends GameObject{
                         break;
                 }
                 console.log("hit");
+                console.log(collectible.type, ":", collectible.value);
             }
         });
         return collectibles.filter(collectible => collectible.isColliding === false);

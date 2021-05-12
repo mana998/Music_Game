@@ -9,6 +9,10 @@ app.use(express.static(__dirname + '/public'));
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
+//reading file
+const fs = require('fs');
+const levels = ["level1-5.json", "level6-10.json", "level11-15.json", "level16-20.json"];
+
 //framerate
 const FRAME_RATE = 30;
 
@@ -24,10 +28,12 @@ const UtilsObject = require("./private/models/Utils").Utils;
 let gameState = new Game();
 const Utils = new UtilsObject();
 
+//load in first batch of songs
+gameState.loadSongs(require(`./private/levels/${levels[(gameState.level-1)/5]}`));
 //collectible items
 //initialize for 1st level
-//hardcoded for now
-let collectibles = gameState.generateCollectibles({hints: ["first", "second"]});
+let collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length));
+//console.log(collectibles);
 let currentColletibles = [];
 
 io.on("connection", (socket) => {
