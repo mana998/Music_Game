@@ -19,11 +19,22 @@ const hint = new Img("./images/character/bard.png", 0, 0, 0, 5, 1);
 class Game {
     constructor () {
         this.level = 1;
-        this.time = 30;
+        //this.time = 30;
         this.players = [];
+        //whether game started
         this.on = false;
+        //remaining songs
+        this.songs = [];
+        //current song
+        this.song;
         //set default to new
         this.stage;
+    }
+
+    loadSongs(list) {
+        for(let key in list) {
+            this.songs.push(list[key]);
+        }
     }
 
     generateCollectibles(song) {
@@ -40,12 +51,24 @@ class Game {
             }
         }
         //add hints
-        song.hints.map((arrayHint) => {
+        this.song = this.getHints(song);
+        this.songs.splice(song, 1);
+        //this.songs.splice(song, 1);
+        console.log("song",this.song);
+        this.song.map((arrayHint) => {
             collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, hint, Utils.getRandomNumber(1, this.level), "hint", arrayHint));
-        })
+        });
         Utils.shuffleArray(collectibles);
         //console.log(collectibles);
+        //console.log(collectibles);
         return collectibles;
+    }
+
+    getHints(song) {
+        //console.log(song);
+        let hints = this.songs[song].split(",");
+        //maybe add length of the song or leave it as set
+        return hints;
     }
 }
 

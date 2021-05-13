@@ -1,0 +1,65 @@
+#guess, #shop {
+    display: none;
+}
+
+.guessing-block{
+    width: 600px;
+    height: 100px;
+    background-image: url("../images/notes/background.png");
+    background-size: contain;
+    display: flex;
+    align-items: flex-start
+}
+
+img {
+    height: 40px;
+    display: inline-block;
+}
+
+.c {
+    margin-top: 45px;
+}
+
+.d {
+    margin-top: 40px;
+}
+
+.e {
+    margin-top: 35px;
+}
+
+.f {
+    margin-top: 30px;
+}
+
+.g {
+    margin-top: 25px;
+}
+
+.a {
+    margin-top: 20px;
+}
+
+.h {
+    margin-top: 15px;
+}
+
+.c2 {
+    margin-top: 10px;
+}
+
+.full {
+    margin-right: 112.5px;
+}
+
+.half {
+    margin-right: 37.5px;
+}
+
+.quarter {
+    margin-right: 0px;
+}
+
+.eighth {
+    margin-right: 0px;
+}

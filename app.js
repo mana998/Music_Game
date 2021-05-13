@@ -9,6 +9,10 @@ app.use(express.static(__dirname + '/public'));
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
+//reading file
+const fs = require('fs');
+const levels = ["level1-5.json", "level6-10.json", "level11-15.json", "level16-20.json"];
+
 //framerate
 const FRAME_RATE = 30;
 
@@ -24,18 +28,18 @@ const UtilsObject = require("./private/models/Utils").Utils;
 let gameState = new Game();
 const Utils = new UtilsObject();
 
+//load in first batch of songs
+gameState.loadSongs(require(`./private/levels/${levels[(gameState.level-1)/5]}`));
 //collectible items
 //initialize for 1st level
-//hardcoded for now
-let collectibles = gameState.generateCollectibles({hints: ["first", "second"]});
+let collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
+//console.log(collectibles);
+let currentColletibles = [];
+
+//interval timer
+let timer;
 
 io.on("connection", (socket) => {
-
-    //send updates to everyone
-    setInterval(() => {
-        if (gameState.on) io.emit('gameState change', gameState);
-        //gameState.on = false;
-    }, 1000 / FRAME_RATE);
 
     //new player connected
     socket.on("client new player", (data) => {
@@ -58,6 +62,7 @@ io.on("connection", (socket) => {
 
     socket.on("start collecting", (data) => {
         //send amount of collectibles to client
+        startInterval();
         console.log("start");
         console.log(collectibles.length);
         gameState.stage = "collect";
@@ -67,8 +72,12 @@ io.on("connection", (socket) => {
     });
 
     socket.on("no collectibles left", (data) => {
+        console.log("no left");
         //console.log("next");
         gameState.stage = "guess";
+        //stop interval for frequent updates
+        clearInterval(timer);
+        io.emit("guess", {song : gameState.song});
     })
 })
 
@@ -80,17 +89,24 @@ async function generateCollectible() {
     //max wait limit is 30 sec
     //min limit depends on level
     let random = Utils.getRandomNumber(10 / gameState.level, 30)*1000;
-    //console.log(random);
+    console.log(random);
     await new Promise(resolve => setTimeout(resolve, random));
     //console.log("item", item);
+    currentColletibles.push(item);
     io.emit("new collectible", {collectible: item});
     if (collectibles.length) {
         generateCollectible();
     }
-    return item;
+    //return item;
 }
 
-
+function startInterval() {
+    //send updates to everyone
+    timer = setInterval(() => {
+        if (gameState.on) io.emit('gameState change', gameState);
+        //gameState.on = false;
+    }, 1000 / FRAME_RATE);
+}
 
 
 const PORT = process.env.PORT || 8080;

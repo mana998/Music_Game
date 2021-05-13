@@ -14,14 +14,17 @@ class Player extends GameObject{
         this.ammo = 0;
     }
 
-    detectCollisions(collectibles, players) {
+    detectCollisions(collectibles) {
         // Check for collisions
+        // use index to break out at first match
+        //console.log("start");
         collectibles.map(collectible => {
-            // Compare player with collectible
             if (rectIntersect(this.x, this.y, this.width, this.height, collectible.x, collectible.y, collectible.width, collectible.height)){
                 collectible.isColliding = true;
+                console.log("intersection");
+                //collectible.isColliding = true;
                 //add stats according to type
-                switch (collectible.type) {
+                switch (collectibles.type) {
                     case "hint":
                         this.hints.push(collectible.value);
                         break;
@@ -35,18 +38,12 @@ class Player extends GameObject{
                         this.ammo += collectible.value;
                         break;
                 }
-                //console.log("hit");
-            } else {
-                //compare other players
-                //players.filter(player => player.username != this.username).map(player => {
-                players.map(player => {
-                    if (rectIntersect(player.x, player.y, player.width, player.height, collectible.x, collectible.y, collectible.width, collectible.height)){
-                        collectible.isColliding = true;
-                    }
-                })
+                console.log(collectible.type, ":", collectible.value);
             }
         });
-        return collectibles.filter(collectible => collectible.isColliding === false);
+        //console.log("hit", hit);
+        //return collectibles.filter(collectible => collectible.isColliding === false);
+        return collectibles;
     }
 }
 
