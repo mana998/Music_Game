@@ -85,6 +85,7 @@ function draw(data) {
     //detect collisions
     //console.log("det", player);
     collectibles = player.detectCollisions(collectibles);
+    //console.log(collectibles);
     //if (result) console.log("ehm", result);
     //draw background
     //draw each player
@@ -114,14 +115,16 @@ socket.on("new collectible", (data) => {
 function drawCollectibles() {
     let length = collectibles.length;
     if (length) {
+        collectibles = collectibles.filter(collectible => (collectible.y <= 500 && collectible.isColliding === false));
+        if (collectibles.length < length) {
+            collectiblesAmount -= length - collectibles.length;
+            console.log("amount", collectiblesAmount);
+        }
         collectibles.map(collectible => {
             collectible.y += collectible.speed;
             collectible.draw(ctx);
+            //console.log(collectible.isColliding);
         });
-        collectibles = collectibles.filter(collectible => collectible.y <= window.innerHeight)
-        if (collectibles.length < length) {
-            collectiblesAmount -= length - collectibles.length;
-        }
     }
     //console.log("collcetibles amount", collectiblesAmount)
     if (collectiblesAmount === 0) {

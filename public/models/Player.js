@@ -21,6 +21,7 @@ class Player extends GameObject{
         collectibles.map(collectible => {
             if (rectIntersect(this.x, this.y, this.width, this.height, collectible.x, collectible.y, collectible.width, collectible.height)){
                 collectible.isColliding = true;
+                console.log("intersection");
                 //collectible.isColliding = true;
                 //add stats according to type
                 switch (collectibles.type) {
@@ -37,11 +38,12 @@ class Player extends GameObject{
                         this.ammo += collectible.value;
                         break;
                 }
-                console.log("hit");
                 console.log(collectible.type, ":", collectible.value);
             }
         });
-        return collectibles.filter(collectible => collectible.isColliding === false);
+        //console.log("hit", hit);
+        //return collectibles.filter(collectible => collectible.isColliding === false);
+        return collectibles;
     }
 }
 
