@@ -5,6 +5,18 @@ const lengths = {
     quarter: 1,
     eighth: 0.5
 };
+
+const sounds = {};
+
+(function loadSounds() {
+    for (note of notes) {
+        for (length in lengths) {
+            sounds[`${lengths[length]}${note}`] = new Sound(`./sounds/notes/${lengths[length]}${note}.mp3`);
+        }
+    }
+})();
+
+
 const answer = [];
 
 socket.on("guess", (data) => {
@@ -55,8 +67,19 @@ function renderNotes() {
 
 }
 
-function play() {
+async function play() {
+    for (note of answer) {
+        //console.log("note", note);
+        let duration = note.replace(/(.+)[a-z]/, '$1') / 2;
+        //console.log("duration", duration);
+        await playNote(note, duration);
+    }
+}
 
+async function playNote(note, duration) {
+    new Sound(`./sounds/notes/${note}.mp3`).play();
+    //sounds[note].play();
+    await new Promise(resolve => setTimeout(resolve, duration * 1000));
 }
 
 function renderOptions() {
@@ -78,7 +101,6 @@ function selectLength(note) {
 function generateLengths(note) {
     let lengthBlock = `<div class="length-block">`;
     for (let length in lengths) {
-        console.log(length);
         lengthBlock += `<img src="./images/notes/${lengths[length]}.png" onClick="addNote('${note}', '${length}')"></img>`;
     };
     lengthBlock += `</div>`;
@@ -88,7 +110,7 @@ function generateLengths(note) {
 function addNote(note, length) {
     $("body .length-block").remove();
     $("#answer").append(`<img src="./images/notes/${lengths[length]}.png" class="${note} ${length}"></img>`);
-    answer.push(`${length}${note}`);
+    answer.push(`${lengths[length]}${note}`);
 }
 
 function removeLast() {

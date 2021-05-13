@@ -6,7 +6,6 @@
     width: 600px;
     height: 100px;
     background-image: url("../images/notes/background.png");
-    background-color: red;
     background-size: contain;
     display: flex;
     align-items: flex-start
