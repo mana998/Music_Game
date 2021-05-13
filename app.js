@@ -32,7 +32,7 @@ const Utils = new UtilsObject();
 gameState.loadSongs(require(`./private/levels/${levels[(gameState.level-1)/5]}`));
 //collectible items
 //initialize for 1st level
-let collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length));
+let collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
 //console.log(collectibles);
 let currentColletibles = [];
 
@@ -81,13 +81,13 @@ io.on("connection", (socket) => {
 
 async function generateCollectible() {
     let item = collectibles.shift();
-    //console.log(collectibles.length);
+    console.log(collectibles.length);
     //set custom timeout for each collectible
-    //console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
+    console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
     //max wait limit is 30 sec
     //min limit depends on level
     let random = Utils.getRandomNumber(10 / gameState.level, 30)*1000;
-    //console.log(random);
+    console.log(random);
     await new Promise(resolve => setTimeout(resolve, random));
     //console.log("item", item);
     currentColletibles.push(item);
