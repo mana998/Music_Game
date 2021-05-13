@@ -76,6 +76,7 @@ io.on("connection", (socket) => {
     socket.on("no collectibles left", (data) => {
         console.log("next");
         gameState.stage = "guess";
+        io.emit("guess");
     })
 })
 
