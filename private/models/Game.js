@@ -26,7 +26,7 @@ class Game {
         //remaining songs
         this.songs = [];
         //current song
-
+        this.song;
         //set default to new
         this.stage;
     }

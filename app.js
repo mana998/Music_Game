@@ -36,13 +36,10 @@ let collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameS
 //console.log(collectibles);
 let currentColletibles = [];
 
-io.on("connection", (socket) => {
+//interval timer
+let timer;
 
-    //send updates to everyone
-    setInterval(() => {
-        if (gameState.on) io.emit('gameState change', gameState);
-        //gameState.on = false;
-    }, 1000 / FRAME_RATE);
+io.on("connection", (socket) => {
 
     //new player connected
     socket.on("client new player", (data) => {
@@ -65,6 +62,7 @@ io.on("connection", (socket) => {
 
     socket.on("start collecting", (data) => {
         //send amount of collectibles to client
+        startInterval();
         console.log("start");
         console.log(collectibles.length);
         gameState.stage = "collect";
@@ -74,17 +72,20 @@ io.on("connection", (socket) => {
     });
 
     socket.on("no collectibles left", (data) => {
-        console.log("next");
+        console.log("no left");
+        //console.log("next");
         gameState.stage = "guess";
-        io.emit("guess");
+        //stop interval for frequent updates
+        clearInterval(timer);
+        io.emit("guess", {song : gameState.song});
     })
 })
 
 async function generateCollectible() {
     let item = collectibles.shift();
-    console.log(collectibles.length);
+    //console.log(collectibles.length);
     //set custom timeout for each collectible
-    console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
+    //console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
     //max wait limit is 30 sec
     //min limit depends on level
     let random = Utils.getRandomNumber(10 / gameState.level, 30)*1000;
@@ -99,7 +100,13 @@ async function generateCollectible() {
     //return item;
 }
 
-
+function startInterval() {
+    //send updates to everyone
+    timer = setInterval(() => {
+        if (gameState.on) io.emit('gameState change', gameState);
+        //gameState.on = false;
+    }, 1000 / FRAME_RATE);
+}
 
 
 const PORT = process.env.PORT || 8080;

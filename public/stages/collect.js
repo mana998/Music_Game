@@ -63,6 +63,7 @@ socket.on('gameState change', (data) => {
     /*if(data.players.length > 1) {
         console.log(data.players);
     }*/
+    fakeIt();
     draw(data);
 });
 
@@ -104,8 +105,14 @@ socket.on("new collectible", (data) => {
     collectibles.push(collectible);
 });
 
+function fakeIt() {
+    player.hints = ['0.1c', '1.1d', '2.1e'];
+    socket.emit("no collectibles left", {});
+}
+
 function drawCollectibles() {
     let length = collectibles.length;
+    console.log("length",length);
     if (length) {
         collectibles = collectibles.filter(collectible => (collectible.y <= 500 && collectible.isColliding === false));
         if (collectibles.length < length) {

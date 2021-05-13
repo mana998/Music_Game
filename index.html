@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Game</title>
+    <link rel="stylesheet" href="./css/style.css">
     <style>
         body{
             margin: 0;
@@ -16,8 +17,10 @@
 <body>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- need exact value as it couldnt handle multiple players -->
-    <canvas id ="canvas" width="500", height="500"></canvas>
+    <main>
+        <!-- need exact value as it couldnt handle multiple players -->
+        <canvas id ="canvas" width="500", height="500"></canvas>
+    </main>
     <script src="./client.js"></script>
     <script src="./stages/collect.js"></script>
     <script src="./stages/guess.js"></script>
