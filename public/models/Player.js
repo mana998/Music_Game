@@ -5,7 +5,7 @@ class Player extends GameObject{
         //coins to be spent in the shop
         this.coins = 0;
         //hints for final guess
-        this.hints = 0;
+        this.hints = [];
         this.health = 5;
         this.points = 0;
         //then divide innerWidth by speed to get final value
@@ -21,14 +21,15 @@ class Player extends GameObject{
         collectibles.map(collectible => {
             if (rectIntersect(this.x, this.y, this.width, this.height, collectible.x, collectible.y, collectible.width, collectible.height)){
                 collectible.isColliding = true;
-                console.log("intersection");
+                //console.log("intersection");
                 //collectible.isColliding = true;
                 //add stats according to type
-                switch (collectibles.type) {
+                //console.log("type", collectibles.type);
+                switch (collectible.type) {
                     case "hint":
                         this.hints.push(collectible.value);
                         break;
-                    case "health":
+                    case "heart":
                         this.health += collectible.value;
                         break;
                     case "coin":
@@ -38,10 +39,11 @@ class Player extends GameObject{
                         this.ammo += collectible.value;
                         break;
                 }
-                console.log(collectible.type, ":", collectible.value);
+                //console.log(collectible.type, ":", collectible.value);
+                //console.log(this);
             }
         });
-        //console.log("hit", hit);
+        //console.log("hit");
         //return collectibles.filter(collectible => collectible.isColliding === false);
         return collectibles;
     }

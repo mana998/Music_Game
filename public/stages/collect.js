@@ -50,7 +50,7 @@ function setup() {
 //player successfully added to the server
 socket.on('server new player', (data) => {
     //console.log(data);
-    console.log(player.username);
+    //console.log(player.username);
     //start new game only if 1 player present
     if (data.state !== "collect") {
         socket.emit("start collecting", {});
@@ -63,7 +63,7 @@ socket.on('gameState change', (data) => {
     /*if(data.players.length > 1) {
         console.log(data.players);
     }*/
-    fakeIt();
+    //fakeIt();
     draw(data);
 });
 
@@ -89,7 +89,8 @@ function draw(data) {
         passedPlayer.draw(ctx);
         //console.log(passedPlayer);
         if (player.username === passedPlayer.username) {
-            player = passedPlayer;
+            player.img = passedPlayer.img;
+            //console.log("player", player);
             //socket.emit("client update", {player: player});
         }
     });
@@ -112,12 +113,12 @@ function fakeIt() {
 
 function drawCollectibles() {
     let length = collectibles.length;
-    console.log("length",length);
+    //console.log("length",length);
     if (length) {
         collectibles = collectibles.filter(collectible => (collectible.y <= 500 && collectible.isColliding === false));
         if (collectibles.length < length) {
             collectiblesAmount -= length - collectibles.length;
-            console.log("amount", collectiblesAmount);
+            //console.log("amount", collectiblesAmount);
         }
         collectibles.map(collectible => {
             collectible.y += collectible.speed;

@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
         //send amount of collectibles to client
         startInterval();
         console.log("start");
-        console.log(collectibles.length);
+        //console.log(collectibles.length);
         gameState.stage = "collect";
         io.emit("collectibles amount", {amount: collectibles.length});
         //recursively generate collectibles
@@ -72,12 +72,12 @@ io.on("connection", (socket) => {
     });
 
     socket.on("no collectibles left", (data) => {
-        console.log("no left");
+        //console.log("no left");
         //console.log("next");
         gameState.stage = "guess";
         //stop interval for frequent updates
         clearInterval(timer);
-        io.emit("guess", {song : gameState.song});
+        io.emit("guess", {length : gameState.song.length});
     })
 })
 
@@ -88,8 +88,8 @@ async function generateCollectible() {
     //console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
     //max wait limit is 30 sec
     //min limit depends on level
-    let random = Utils.getRandomNumber(10 / gameState.level, 30)*1000;
-    console.log(random);
+    let random = Utils.getRandomNumber(10 / gameState.level, 25)*1000;
+    //console.log(random);
     await new Promise(resolve => setTimeout(resolve, random));
     //console.log("item", item);
     currentColletibles.push(item);
