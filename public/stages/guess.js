@@ -1,4 +1,4 @@
-const notes = ['c', 'd', 'e', 'f', 'g', 'a', 'h', 'c2'];
+const notes = ['-','c', 'd', 'e', 'f', 'g', 'a', 'h', 'c2'];
 const lengths = {
     full: 4, 
     half: 2, 
@@ -7,6 +7,8 @@ const lengths = {
 };
 
 const sounds = {};
+
+let songLength;
 
 (function loadSounds() {
     for (note of notes) {
@@ -20,10 +22,18 @@ const sounds = {};
 const answer = [];
 
 socket.on("guess", (data) => {
+    songLength = data.length;
+    //console.log(songLength);
     //hide canvas
     $("#canvas").hide();
     //add guessing screen
     $("main").append(renderGuessingElement());
+    //console.log("player",player);
+    for (hint of player.hints) {
+        $("#hints").append(renderHint(hint));
+    }
+    $("#song-length").text(`/${songLength}`);
+    $("#current-length").text("0");
 })
 
 function renderGuessingElement() {
@@ -41,8 +51,12 @@ function renderGuessingElement() {
             </div>
             <button onClick="play()">PLAY</button>
             <button onClick="removeLast()">REMOVE LAST</button>
+            <div><span id="current-length"></span><span id="song-length"></span></div>
             <div id="options">
             </div>
+            <h3>HINTS</h3>
+            <ul id="hints">
+            </ul>
         </div>
     </div>
     `
@@ -63,10 +77,6 @@ function renderGuess() {
     $("#options").append(renderOptions());
 }
 
-function renderNotes() {
-
-}
-
 async function play() {
     for (note of answer) {
         //console.log("note", note);
@@ -83,7 +93,7 @@ async function playNote(note, duration) {
 }
 
 function renderOptions() {
-    let options;
+    let options = '';
     notes.map(note => {
         options += renderOption(note);
     })
@@ -91,7 +101,17 @@ function renderOptions() {
 }
 
 function renderOption(note) {
-    return `<button onClick="selectLength('${note}')">${note}</button>`;
+    return `<button class="note-type-button" onClick="selectLength('${note}')">${note}</button>`;
+}
+
+function renderHint(hint) {
+    let position = hint.split('.')[0];
+    let duration = hint.replace(/\d*\.([0-9.]+).+/, "$1");
+    //console.log("Duration extract", duration);
+    duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
+    let note = hint.replace(/\d*\.[0-9.]+(.+)/, "$1");
+    //console.log("Position", position, "duration", duration, "note", note);
+    return `<li class="hint">Position: ${position}, Note ${note}, Duration ${duration}</li>`;
 }
 
 function selectLength(note) {
@@ -111,9 +131,17 @@ function addNote(note, length) {
     $("body .length-block").remove();
     $("#answer").append(`<img src="./images/notes/${lengths[length]}.png" class="${note} ${length}"></img>`);
     answer.push(`${lengths[length]}${note}`);
+    $("#current-length").text(answer.length);
+    if (answer.length === songLength) {
+        $(".note-type-button").attr("disabled", true);
+    }
 }
 
 function removeLast() {
+    if (answer.length === songLength) {
+        $(".note-type-button").attr("disabled", false);
+    }
     answer.pop();
+    $("#current-length").text(answer.length);
     $("#answer").children().last().remove();
 }
