@@ -1,9 +1,11 @@
-const notes = ['-','c', 'd', 'e', 'f', 'g', 'a', 'h', 'c2'];
+const notes = ['rest','c', 'd', 'e', 'f', 'g', 'a', 'h', 'c2'];
 const lengths = {
-    full: 4, 
-    half: 2, 
-    quarter: 1,
-    eighth: 0.5
+    "whole": 4,
+    "dotted-half": 3,  
+    "half": 2,
+    "dotted-quarter": 1.5,
+    "quarter": 1,
+    "eighth": 0.5
 };
 
 const sounds = {};
@@ -12,9 +14,11 @@ let songLength;
 
 (function loadSounds() {
     for (note of notes) {
-        for (length in lengths) {
-            sounds[`${lengths[length]}${note}`] = new Sound(`./sounds/notes/${lengths[length]}${note}.mp3`);
-        }
+        for (let length in lengths) {
+            if (!note.includes("rest") && !length.includes("dotted")){
+                sounds[`${lengths[length]}${note}`] = new Sound(`./sounds/notes/${lengths[length]}${note}.mp3`);
+            }
+        };
     }
 })();
 
@@ -80,7 +84,7 @@ function renderGuess() {
 async function play() {
     for (note of answer) {
         //console.log("note", note);
-        let duration = note.replace(/(.+)[a-z]/, '$1') / 2;
+        let duration = note.replace(/(\d(\.\d)?)[a-z1-9]*/, '$1') / 2;
         //console.log("duration", duration);
         await playNote(note, duration);
     }
@@ -88,6 +92,7 @@ async function play() {
 
 async function playNote(note, duration) {
     new Sound(`./sounds/notes/${note}.mp3`).play();
+    //console.log("note", note, "duration", duration);
     //sounds[note].play();
     await new Promise(resolve => setTimeout(resolve, duration * 1000));
 }
@@ -121,7 +126,11 @@ function selectLength(note) {
 function generateLengths(note) {
     let lengthBlock = `<div class="length-block">`;
     for (let length in lengths) {
-        lengthBlock += `<img src="./images/notes/${lengths[length]}.png" onClick="addNote('${note}', '${length}')"></img>`;
+        if (note.includes("rest") && !length.includes("dotted")) {
+            lengthBlock += `<img src="./images/notes/${lengths[length]}rest.png" onClick="addNote('${note}', '${length}')"></img>`;
+        } else if (!note.includes("rest")){
+            lengthBlock += `<img src="./images/notes/${lengths[length]}.png" onClick="addNote('${note}', '${length}')"></img>`;
+        }
     };
     lengthBlock += `</div>`;
     return lengthBlock;
@@ -129,7 +138,7 @@ function generateLengths(note) {
 
 function addNote(note, length) {
     $("body .length-block").remove();
-    $("#answer").append(`<img src="./images/notes/${lengths[length]}.png" class="${note} ${length}"></img>`);
+    $("#answer").append(`<img src="./images/notes/${lengths[length]}${(note === 'rest') ? 'rest' : ''}.png" class="${note} ${length}"></img>`);
     answer.push(`${lengths[length]}${note}`);
     $("#current-length").text(answer.length);
     if (answer.length === songLength) {

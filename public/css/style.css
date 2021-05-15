@@ -52,8 +52,16 @@ img {
     margin-right: 112.5px;
 }
 
+.dotted-half {
+    margin-right: 75px;
+}
+
 .half {
     margin-right: 37.5px;
+}
+
+.dotted-quarter {
+    margin-right: 18.75px;
 }
 
 .quarter {
@@ -62,4 +70,20 @@ img {
 
 .eighth {
     margin-right: 0px;
+}
+
+.rest.full {
+    margin-top: 10px;
+}
+
+.rest.half {
+    margin-top: 10px;
+}
+
+.rest.quarter {
+    margin-top: 30px;
+}
+
+.rest.eighth {
+    margin-top: 20px;
 }
