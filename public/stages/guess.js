@@ -48,15 +48,17 @@ function renderGuessingElement() {
         <button id="shop-button" onClick="renderShop()">SHOP</button>
         <button id="guess-button" onClick="renderGuess()">GUESS</button>
         <div id="shop">
-            <h2>SHOP</h2>
+            <h2 class="guess-title">SHOP</h2>
         </div>
         <div id="guess">
-            <h2>GUESS</h2>
+            <h2 class="guess-title">GUESS</h2>
             <div id="answer" class="guessing-block">
             </div>
-            <button onClick="play()">PLAY</button>
-            <button onClick="removeLast()">REMOVE LAST</button>
-            <button id = "send-answer-button" onClick="sendAnswer()" disabled>SEND ANSWER</button>
+            <div class="option-buttons">
+                <button onClick="play()">PLAY</button>
+                <button onClick="removeLast()">REMOVE LAST</button>
+                <button id = "send-answer-button" onClick="sendAnswer()" disabled>SEND ANSWER</button>
+            </div>
             <div class="length"><span id="current-length"></span><span id="song-length"></span></div>
             <div id="options">
             </div>
@@ -72,14 +74,14 @@ function renderShop() {
     $("#shop-button").hide();
     $("#guess-button").hide();
     $("#guess").hide();
-    $("#shop").show();
+    $("#shop").css("display", "inline-block");
 };
 
 function renderGuess() {
-    $("#shop-button").hide();
     $("#guess-button").hide();
+    $("#shop-button").hide();
     $("#shop").hide();
-    $("#guess").show();
+    $("#guess").css("display", "inline-block");
     $("#options").append(renderOptions());
 }
 

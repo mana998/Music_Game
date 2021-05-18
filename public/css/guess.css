@@ -2,6 +2,55 @@
     display: none;
 }
 
+#guess-block {
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+}
+
+#player-username {
+    text-align: center;
+    font-size: 2em;
+}
+
+button {
+    background-color: rgb(226, 255, 221);
+    border: none;
+    outline: none;
+    padding: 0.5em;
+    margin: 0.5em;
+    cursor: pointer;
+}
+
+.option-buttons, #options, .length {
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.length-block {
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+    background: white;
+    box-shadow: 1px 1px 10px rgb(182, 182, 182);
+    width: 20em;
+    padding: 2em;
+}
+
+.length-block img {
+    padding: 1em;
+}
+
+.guess-title {
+    text-align: center;
+}
+
+/*notes*/
 .guessing-block{
     width: 600px;
     height: 100px;
