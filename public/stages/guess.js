@@ -26,6 +26,7 @@ let songLength;
 const answer = [];
 
 socket.on("guess", (data) => {
+    console.log("guessing");
     songLength = data.length;
     //console.log(songLength);
     //hide canvas
@@ -55,7 +56,8 @@ function renderGuessingElement() {
             </div>
             <button onClick="play()">PLAY</button>
             <button onClick="removeLast()">REMOVE LAST</button>
-            <div><span id="current-length"></span><span id="song-length"></span></div>
+            <button id = "send-answer-button" onClick="sendAnswer()" disabled>SEND ANSWER</button>
+            <div class="length"><span id="current-length"></span><span id="song-length"></span></div>
             <div id="options">
             </div>
             <h3>HINTS</h3>
@@ -82,19 +84,26 @@ function renderGuess() {
 }
 
 async function play() {
-    for (note of answer) {
-        //console.log("note", note);
-        let duration = note.replace(/(\d(\.\d)?)[a-z1-9]*/, '$1') / 2;
-        //console.log("duration", duration);
-        await playNote(note, duration);
+    for (note of player.answer) {
+        await playOne(note);
     }
+}
+
+async function playOne(note) {
+    let duration = note.replace(/(\d(\.\d)?)[a-z1-9]*/, '$1') / 2;
+    //console.log("duration", duration);
+    //console.log("play one before",  new Date().getTime());
+    await playNote(note, duration);
+    //console.log("play one after",  new Date().getTime());
 }
 
 async function playNote(note, duration) {
     new Sound(`./sounds/notes/${note}.mp3`).play();
     //console.log("note", note, "duration", duration);
     //sounds[note].play();
+    //console.log("play note before", new Date().getTime());
     await new Promise(resolve => setTimeout(resolve, duration * 1000));
+    //console.log("play note after duration", duration,  new Date().getTime());
 }
 
 function renderOptions() {
@@ -138,19 +147,88 @@ function generateLengths(note) {
 
 function addNote(note, length) {
     $("body .length-block").remove();
-    $("#answer").append(`<img src="./images/notes/${lengths[length]}${(note === 'rest') ? 'rest' : ''}.png" class="${note} ${length}"></img>`);
-    answer.push(`${lengths[length]}${note}`);
-    $("#current-length").text(answer.length);
-    if (answer.length === songLength) {
+    drawNote(note, length);
+    //console.log(player);
+    player.answer.push(`${lengths[length]}${note}`);
+    $("#current-length").text(player.answer.length);
+    if (player.answer.length === songLength) {
         $(".note-type-button").attr("disabled", true);
+        $("#send-answer-button").attr("disabled", false);
+    } else {
+        $("#send-answer-button").attr("disabled", true);
     }
 }
 
+function drawNote(note, length) {
+    $("#answer").append(`<img src="./images/notes/${lengths[length]}${(note === 'rest') ? 'rest' : ''}.png" class="${note} ${length}"></img>`);
+}
+
 function removeLast() {
-    if (answer.length === songLength) {
+    if (player.answer.length === songLength) {
         $(".note-type-button").attr("disabled", false);
     }
-    answer.pop();
-    $("#current-length").text(answer.length);
+    player.answer.pop();
+    $("#current-length").text(player.answer.length);
     $("#answer").children().last().remove();
+}
+
+function sendAnswer() {
+    //console.log(player.answer);
+    socket.emit("client update", {player: player});
+    socket.emit("send answer", {player: player});
+    $("button").attr("disabled", true);
+    $("#guess").prepend(`<h2>Waiting for other players</h2>`);
+}
+
+socket.on("check answers", (data) => {
+    $('#guess').contents(':not(#answer)').remove();
+    $('#answer img').remove();
+    $('#guess').prepend(`<h2 class = "points">Points: <span id="point">0</span></h2>`);
+    $('#guess').prepend(`<h1 class = "guessing-player"></h1>`);
+    checkAnswers(data);
+})
+
+async function checkAnswers(data) {
+    data.song = data.song.map((note) => note.replace(/\d+\.(.+)/, "$1"));
+    for (let i = 0; i < data.players.length; i++) {
+    //for (guessingPlayer of data.players) {
+        let guessingPlayer = data.players[i];
+        let points = 0;
+        $(".points").text(points).css("color", "black");
+        $('.guessing-player').text(guessingPlayer.username);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        let index = 0;
+        for (note of guessingPlayer.answer) {
+            points = await showGuessNote(note, index++, points, data.song);
+            //console.log("points", points);
+        }
+        guessingPlayer.points += points;
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        //console.log("after play");
+        $('#answer img').remove();
+    }
+    $(".points").text(0).css("color", "black");
+    $('.guessing-player').text("CORRECT SONG");
+    $('#guess .points').remove();
+    for (note of data.song) {
+        await showGuessNote(note);
+    }
+}
+
+async function showGuessNote(note, index, points, song){
+    let duration = note.replace(/(\d(\.\d)?)[a-z1-9-]*/, '$1');
+    let noteType = note.replace(/\d(\.\d)?([a-z1-9-]*)/, '$2');
+    noteType = noteType.replace("-", "rest");
+    duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
+    if (index > -1) {
+        song[index] = song[index].replace("-", "rest");
+        if (note === song[index]) {
+            $(".points").text(++points).css("color", "green");
+        } else {
+            $(".points").text(--points).css("color", "red");
+        }
+    }
+    drawNote(noteType, duration);
+    await playOne(note);
+    return points;
 }

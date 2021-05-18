@@ -12,6 +12,7 @@ class Player extends GameObject{
         //this.speed = 1000 - (5 * 100);
         this.speed = 5;
         this.ammo = 0;
+        this.answer = [];
     }
 
     detectCollisions(collectibles) {
