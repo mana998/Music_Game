@@ -77,9 +77,10 @@ io.on("connection", (socket) => {
     socket.on("no collectibles left", (data) => {
         //stop interval for frequent updates
         clearInterval(timer);
-        //console.log("no left");
+        console.log("no left");
         //console.log("next");
         if (gameState.stage !== "guess") {
+            console.log("emmited");
             io.emit("guess", {length : gameState.song.length});
             gameState.stage = "guess";
         }
@@ -93,6 +94,15 @@ io.on("connection", (socket) => {
             io.emit("check answers", {players: gameState.players, song: gameState.song})
         }
     })
+
+    socket.on("get hint", (data) => {
+        let unusedHints = gameState.song.filter((hint) => !data.hints.includes(hint));
+        console.log("used", data.hints);
+        console.log("unused", unusedHints);
+        let hint = unusedHints[Utils.getRandomNumber(0, unusedHints.length, true)];
+        console.log("hint", hint);
+        socket.emit("new hint", {hint: hint});
+    })
 })
 
 async function generateCollectible() {
@@ -105,7 +115,7 @@ async function generateCollectible() {
     let random = Utils.getRandomNumber(10 / gameState.level, 10)*1000;
     console.log(random);
     await new Promise(resolve => setTimeout(resolve, random));
-    console.log("item", item);
+    //console.log("item", item);
     currentColletibles.push(item);
     io.emit("new collectible", {collectible: item});
     if (collectibles.length) {

@@ -1,7 +1,7 @@
 //const GameObject = require("../../public/models/GameObject").GameObject;
 const Collectible = require("../../public/models/Collectible").Collectible;
 const Img = require("../../public/models/Img").Img;
-const UtilsObject = require("../../private/models/Utils").Utils;
+const UtilsObject = require("./Utils").Utils;
 
 const Utils = new UtilsObject();
 

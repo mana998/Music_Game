@@ -17,4 +17,4 @@ class Utils {
 
 }
 
-module.exports = {Utils}
+if (typeof exports !== 'undefined'&& typeof module !== 'undefined' && module.exports) module.exports = {Utils};

@@ -49,6 +49,21 @@ function renderGuessingElement() {
         <button id="guess-button" onClick="renderGuess()">GUESS</button>
         <div id="shop">
             <h2 class="guess-title">SHOP</h2>
+            <div class="shop-item">
+                <img src="./images/character/bard.png">
+                <span>Price: 5</span>
+                <button id="buy-health-button" ${player.coins < 5 ? 'disabled' : ''} onClick="buyHealth();">BUY HEART</button>
+            </div>
+            <div class="shop-item">
+                <img src="./images/character/bard.png">
+                <span>Price: 20</span>
+                <button id="buy-speed-button" ${player.coins < 20 ? 'disabled' : ''} onClick="buySpeed();">BUY Speed</button>
+            </div>
+            <div class="shop-item">
+                <img src="./images/character/bard.png">
+                <span>Price: 10</span>
+                <button id="buy-hint-button" ${(player.coins < 10 || player.hints.length === songLength) ? 'disabled' : ''} onClick="buyHint();">BUY HINT</button>
+            </div>
         </div>
         <div id="guess">
             <h2 class="guess-title">GUESS</h2>
@@ -237,4 +252,46 @@ async function showGuessNote(note, index, points, song){
     drawNote(noteType, duration);
     await playOne(note);
     return points;
+}
+
+function buyHealth() {
+    player.coins -= 5;
+    player.health += 1;
+    //console.log("health", player.health);
+    checkMoney();
+}
+
+function buySpeed() {
+    player.coins -= 20;
+    player.speed += 1;
+    //console.log("speed", player.speed);
+    checkMoney();
+}
+
+
+function buyHint() {
+    player.coins -= 10;
+    //console.log("hint");
+    socket.emit("get hint", {hints: player.hints});
+}
+
+socket.on("new hint", (data) => {
+    //console.log("shint", data.hint);
+    //console.log("player hitns", player.hints);
+    player.hints.push(data.hint);
+    //console.log("player hints", player.hints);
+    $("#hints").append(renderHint(data.hint));
+    checkMoney();
+});
+
+function checkMoney() {
+    if (player.coins < 20) {
+        $("#buy-speed-button").attr("disabled", true);
+    }
+    if (player.coins < 10 || player.hints.length === songLength) {
+        $("#buy-hint-button").attr("disabled", true);
+    }
+    if (player.coins < 5) {
+        $("#buy-health-button").attr("disabled", true);
+    }
 }
