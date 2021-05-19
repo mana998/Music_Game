@@ -127,7 +127,7 @@ function renderHint(hint) {
     duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
     let note = hint.replace(/\d*\.[0-9.]+(.+)/, "$1");
     //console.log("Position", position, "duration", duration, "note", note);
-    return `<li class="hint">Position: ${position}, Note ${note}, Duration ${duration}</li>`;
+    return `<li class="hint">Position: ${position + 1}, Note ${note}, Duration ${duration}</li>`;
 }
 
 function selectLength(note) {
