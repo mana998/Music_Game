@@ -11,7 +11,6 @@ class Player extends GameObject{
         //then divide innerWidth by speed to get final value
         //this.speed = 1000 - (5 * 100);
         this.speed = 5;
-        this.ammo = 0;
         this.answer = [];
     }
 
@@ -36,8 +35,8 @@ class Player extends GameObject{
                     case "coin":
                         this.coins += collectible.value;
                         break;
-                    case "ammo":
-                        this.ammo += collectible.value;
+                    case "hit":
+                        this.health -= collectible.value;
                         break;
                 }
                 //console.log(collectible.type, ":", collectible.value);

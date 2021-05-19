@@ -11,10 +11,10 @@ const CollectibleHeight = 32;
 //items with variable amount
 let items = new Map();
 items.set("heart", new Img("./images/character/bard.png", 0, 0, 0, 5, 1));
-items.set("coin", new Img("./images/character/bard.png", 0, 0, 0, 5, 1));
-items.set("ammo", new Img("./images/character/bard.png", 0, 0, 0, 5, 1));
+items.set("coin", new Img("./images/character/bard.png", 1, 0, 0, 5, 1));
+items.set("hit", new Img("./images/character/bard.png", 2, 0, 0, 5, 1));
 //depends on song
-const hint = new Img("./images/character/bard.png", 0, 0, 0, 5, 1);
+const hint = new Img("./images/character/bard.png", 3, 0, 0, 5, 1);
 
 class Game {
     constructor () {
