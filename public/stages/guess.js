@@ -72,14 +72,12 @@ function renderGuessingElement() {
 
 function renderShop() {
     $("#shop-button").hide();
-    $("#guess-button").hide();
     $("#guess").hide();
     $("#shop").css("display", "inline-block");
 };
 
 function renderGuess() {
     $("#guess-button").hide();
-    $("#shop-button").hide();
     $("#shop").hide();
     $("#guess").css("display", "inline-block");
     $("#options").append(renderOptions());
@@ -127,7 +125,7 @@ function renderHint(hint) {
     duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
     let note = hint.replace(/\d*\.[0-9.]+(.+)/, "$1");
     //console.log("Position", position, "duration", duration, "note", note);
-    return `<li class="hint">Position: ${position + 1}, Note ${note}, Duration ${duration}</li>`;
+    return `<li class="hint">Position: ${Number(position) + 1}, Note ${note}, Duration ${duration}</li>`;
 }
 
 function selectLength(note) {
