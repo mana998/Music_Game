@@ -71,16 +71,22 @@ function renderGuessingElement() {
 }
 
 function renderShop() {
+    $("#guess-button").show();
+    $("#guess-button").addClass("top-right-button");
     $("#shop-button").hide();
     $("#guess").hide();
     $("#shop").css("display", "inline-block");
 };
 
 function renderGuess() {
+    $("#shop-button").show();
     $("#guess-button").hide();
+    $("#shop-button").addClass("top-right-button");
     $("#shop").hide();
     $("#guess").css("display", "inline-block");
-    $("#options").append(renderOptions());
+    if ($("#options").children().length === 0) {
+        $("#options").append(renderOptions());
+    }
 }
 
 async function play() {
