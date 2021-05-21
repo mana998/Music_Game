@@ -46,12 +46,19 @@ io.on("connection", (socket) => {
 
     //new player connected
     socket.on("client new player", (data) => {
-        //console.log("new plazer");
-        //console.log("plazer", data.player);
-        gameState.players.push(data.player);
-        //player.draw();
-        if (!gameState.on) gameState.on = true;
-        socket.emit("server new player", {state: gameState.state});
+        console.log("new plazer");
+        console.log("plazer", data.player);
+        //check username duplicate
+        if (gameState.players.some((player) => player.username === data.player.username)){
+            socket.emit("duplicate name", {username: data.player.username});
+        } else {
+            console.log("else");
+            gameState.players.push(data.player);
+            //player.draw();
+            if (!gameState.on) gameState.on = true;
+            console.log(gameState);
+            io.emit("server new player", {stage: gameState.stage, player: data.player});
+        }
     })
 
     //player update
@@ -64,14 +71,18 @@ io.on("connection", (socket) => {
     })
 
     socket.on("start collecting", (data) => {
-        //send amount of collectibles to client
-        startInterval();
-        console.log("start");
-        //console.log(collectibles.length);
-        gameState.stage = "collect";
-        io.emit("collectibles amount", {amount: collectibles.length});
-        //recursively generate collectibles
-        generateCollectible();
+        answered++;
+        if (answered === gameState.players.length) {
+            //send amount of collectibles to client
+            startInterval();
+            console.log("start");
+            //console.log(collectibles.length);
+            gameState.stage = "collect";
+            io.emit("collectibles amount", {amount: collectibles.length});
+            //recursively generate collectibles
+            generateCollectible();
+            answered = 0;
+        }
     });
 
     socket.on("no collectibles left", (data) => {
@@ -92,6 +103,7 @@ io.on("connection", (socket) => {
         //console.log("players", gameState.players.length);
         if (answered === gameState.players.length) {
             io.emit("check answers", {players: gameState.players, song: gameState.song})
+            answered = 0;
         }
     })
 

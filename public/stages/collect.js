@@ -14,6 +14,10 @@ let left;
 let right;
 let middle;
 
+//answered to start a game
+let answered = false;
+let collecting = false;
+
 window.addEventListener("load",() => {
     //reposition canvas to center
     reposition();
@@ -28,6 +32,14 @@ window.addEventListener("resize",() => {
 
 //setup new game
 function setup() {
+    $("main").append(`<div class="new-player">
+    <input class="username-input" type = text required>
+    <button class="confirm-username-button" onClick="setupPlayer()">JOIN</button>
+</div>`);
+}
+
+function setupPlayer() {
+    console.log("setup");
     //select img
     let img = new Image();
     img.src = "./images/character/bard.png";
@@ -36,26 +48,42 @@ function setup() {
     left = [1, 0];
     middle = [0, 1]; 
     //temporary unique username
-    let username = Math.random(50)*10;
+    let username = $(".username-input").val();
+    //let username = Math.random(50)*10;
     player = new Player(
         canvas.width/2, canvas.height - characterHeight, 
         32, 32,
         username,
         initial
     );
+
+    console.log("username", username);
+    console.log("player", player);
     //send data to the server
     socket.emit("client new player", {player: player});
 }
 
 //player successfully added to the server
 socket.on('server new player', (data) => {
+    console.log(data);
+    if (data.player && player && data.player.username === player.username) {
+        $(".new-player").append(`<button class="start-button" onClick="confirmStart('${data.stage}');">START</button>`);
+        $(".username-input").attr("disabled", true);
+        $(".confirm-username-button").attr("disabled", true);
+    }
     //console.log(data);
     //console.log(player.username);
     //start new game only if 1 player present
-    if (data.state !== "collect") {
-        socket.emit("start collecting", {});
-    }
 });
+
+function confirmStart(state) {
+    if (state === "starting") {
+        socket.emit("start collecting", {});
+        $(".start-button").attr("disabled", true);
+        $(".new-player").append(`<p class="waiting">Waiting for other players</p>`)
+        collecting = true;
+    }
+}
 
 //draw game state
 socket.on('gameState change', (data) => {
@@ -69,6 +97,8 @@ socket.on('gameState change', (data) => {
 
 //set collectible amount
 socket.on('collectibles amount', (data) => {
+    $(".start-button").hide()
+    $(".new-player").hide();
     collectiblesAmount = data.amount;
 });
 
@@ -139,38 +169,42 @@ window.addEventListener("keyup", stop);
 
 //change animation
 function move(e) {
-    //move player
-    let moved = true;
-    switch(e.key) {
-        case "A":
-        case "a":
-        case "ArrowLeft":
-            switchImage("start", left);
-            player.x -= 1 * player.speed;
-            //console.log("x",player.x);
-            //console.log("speed",player.speed);
-            break;
-        case "D":
-        case "d":
-        case "ArrowRight":
-            switchImage("start", right);
-            player.x += 1 * player.speed;
-            //console.log("x",player.x);
-            //console.log("speed",player.speed);
-            break;
-        default: 
-            //prevent unnecessary updates
-            moved = false;
+    if (collecting) {
+        //move player
+        let moved = true;
+        switch(e.key) {
+            case "A":
+            case "a":
+            case "ArrowLeft":
+                switchImage("start", left);
+                player.x -= 1 * player.speed;
+                //console.log("x",player.x);
+                //console.log("speed",player.speed);
+                break;
+            case "D":
+            case "d":
+            case "ArrowRight":
+                switchImage("start", right);
+                player.x += 1 * player.speed;
+                //console.log("x",player.x);
+                //console.log("speed",player.speed);
+                break;
+            default: 
+                //prevent unnecessary updates
+                moved = false;
+        }
+        //update server
+        if (moved) updateServer();
     }
-    //update server
-    if (moved) updateServer();
 }
 
 //change animation to standing
 function stop() {
-    switchImage("start", middle);
-    switchImage("current", middle);
-    updateServer();
+    if (collecting) {
+        switchImage("start", middle);
+        switchImage("current", middle);
+        updateServer();
+    }
 }
 
 //send player update

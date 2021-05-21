@@ -28,7 +28,7 @@ class Game {
         //current song
         this.song;
         //set default to new
-        this.stage;
+        this.stage = "starting";
     }
 
     loadSongs(list) {
