@@ -34,3 +34,21 @@
     align-self: center;
     grid-row-start: 2;
 }
+
+.player-collectibles {
+    top: 10%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+}
+
+.player-collectible {
+    display: inline;
+    margin: 1em
+}
+
+.collectible-img {
+    width: 16px;
+    height: 16px;
+}

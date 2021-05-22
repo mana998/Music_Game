@@ -44,23 +44,23 @@ socket.on("guess", (data) => {
 function renderGuessingElement() {
     return `
     <div id="guess-block">
-        <h1 id="player-username">Meno</h1>
+        <h1 id="player-username">${player.username}</h1>
         <button id="shop-button" onClick="renderShop()">SHOP</button>
         <button id="guess-button" onClick="renderGuess()">GUESS</button>
         <div id="shop">
             <h2 class="guess-title">SHOP</h2>
             <div class="shop-item">
-                <img src="./images/character/bard.png">
+                <img src="./images/collectibles/health.png">
                 <span>Price: 5</span>
                 <button id="buy-health-button" ${player.coins < 5 ? 'disabled' : ''} onClick="buyHealth();">BUY HEART</button>
             </div>
             <div class="shop-item">
-                <img src="./images/character/bard.png">
+                <img src="./images/collectibles/speed.png">
                 <span>Price: 20</span>
                 <button id="buy-speed-button" ${player.coins < 20 ? 'disabled' : ''} onClick="buySpeed();">BUY Speed</button>
             </div>
             <div class="shop-item">
-                <img src="./images/character/bard.png">
+                <img src="./images/collectibles/hint.png">
                 <span>Price: 10</span>
                 <button id="buy-hint-button" ${(player.coins < 10 || player.hints.length === songLength) ? 'disabled' : ''} onClick="buyHint();">BUY HINT</button>
             </div>
@@ -224,6 +224,7 @@ async function checkAnswers(data) {
         }
         if (guessingPlayer.username === player.username) {
             player.points += points;
+            $(`#points-value`).text(player.points);
         }
         await new Promise(resolve => setTimeout(resolve, 5000));
         //console.log("after play");
@@ -239,6 +240,7 @@ async function checkAnswers(data) {
     $("#canvas").show();
     player.answer = [];
     player.hints = [];
+    $(`#hints-value`).text(player.hints.length);
     socket.emit("client update", {player: player});
     socket.emit("start collecting", {stage: "new level"});
 }
@@ -264,6 +266,8 @@ async function showGuessNote(note, index, points, song){
 function buyHealth() {
     player.coins -= 5;
     player.health += 1;
+    $(`#health-value`).text(player.health);
+    $(`#coins-value`).text(player.coins);
     //console.log("health", player.health);
     checkMoney();
 }
@@ -271,6 +275,8 @@ function buyHealth() {
 function buySpeed() {
     player.coins -= 20;
     player.speed += 1;
+    $(`#speed-value`).text(player.speed);
+    $(`#coins-value`).text(player.coins);
     //console.log("speed", player.speed);
     checkMoney();
 }
@@ -288,6 +294,8 @@ socket.on("new hint", (data) => {
     player.hints.push(data.hint);
     //console.log("player hints", player.hints);
     $("#hints").append(renderHint(data.hint));
+    $(`#hints-value`).text(player.hints.length);
+    $(`#coins-value`).text(player.coins);
     checkMoney();
 });
 

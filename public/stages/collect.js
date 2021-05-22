@@ -61,6 +61,7 @@ function setupPlayer() {
     console.log("player", player);
     //send data to the server
     socket.emit("client new player", {player: player});
+    player.showCollectibles();
 }
 
 //player successfully added to the server

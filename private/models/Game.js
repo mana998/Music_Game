@@ -5,16 +5,16 @@ const UtilsObject = require("./Utils").Utils;
 
 const Utils = new UtilsObject();
 
-const CollectibleWidth = 32;
-const CollectibleHeight = 32;
+const CollectibleWidth = 16;
+const CollectibleHeight = 16;
 
 //items with variable amount
 let items = new Map();
-items.set("heart", new Img("./images/character/bard.png", 0, 0, 0, 5, 1));
-items.set("coin", new Img("./images/character/bard.png", 1, 0, 0, 5, 1));
-items.set("hit", new Img("./images/character/bard.png", 2, 0, 0, 5, 1));
+items.set("heart", new Img("./images/collectibles/health.png", 0, 0, 1, 1, 0));
+items.set("coin", new Img("./images/collectibles/coins.png", 0, 0, 1, 1, 0));
+items.set("hit", new Img("./images/collectibles/hit.png", 0, 0, 1, 1, 0));
 //depends on song
-const hint = new Img("./images/character/bard.png", 3, 0, 0, 5, 1);
+const hint = new Img("./images/collectibles/hints.png", 0, 0, 1, 1, 0);
 
 class Game {
     constructor () {

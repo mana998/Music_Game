@@ -28,24 +28,50 @@ class Player extends GameObject{
                 switch (collectible.type) {
                     case "hint":
                         this.hints.push(collectible.value);
+                        $(`#hints-value`).text(this.hints.length);
                         break;
                     case "heart":
                         this.health += collectible.value;
+                        $(`#health-value`).text(this.health);
                         break;
                     case "coin":
                         this.coins += collectible.value;
+                        $(`#coins-value`).text(this.coins);
                         break;
                     case "hit":
+                        console.log("hiiiit")
                         this.health -= collectible.value;
+                        $(`#health-value`).text(this.health);
                         break;
                 }
-                //console.log(collectible.type, ":", collectible.value);
+                console.log(collectible.type, ":", collectible.value);
                 //console.log(this);
             }
         });
         //console.log("hit");
         //return collectibles.filter(collectible => collectible.isColliding === false);
         return collectibles;
+    }
+
+    showCollectibles() {
+        $("main").append(this.renderPlayerCollectibles());
+    }
+    
+    renderPlayerCollectibles() {
+        let result = `<div class="player-collectibles">`;
+        let items =  ["health", "coins", "points", "speed", "hints"];
+        items.map(item => {
+            result += this.renderPlayerCollectible(item);
+        });
+        result += `</div>`;
+        return result;
+    }
+
+    renderPlayerCollectible(collectible) {
+        return `<div class="player-collectible">
+            <img class="collectible-img" src="./images/collectibles/${collectible}.png">
+            <span id="${collectible}-value">${collectible !== "hints" ? this[collectible] : this[collectible].length}</span>
+        </div>`
     }
 }
 
