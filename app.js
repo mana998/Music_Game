@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
     //new player connected
     socket.on("client new player", (data) => {
         console.log("new plazer");
-        console.log("plazer", data.player);
+        //console.log("plazer", data.player);
         //check username duplicate
         if (gameState.players.some((player) => player.username === data.player.username)){
             socket.emit("duplicate name", {username: data.player.username});
@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
             gameState.players.push(data.player);
             //player.draw();
             if (!gameState.on) gameState.on = true;
-            console.log(gameState);
+            //console.log(gameState);
             io.emit("server new player", {stage: gameState.stage, player: data.player});
         }
     })
@@ -73,6 +73,11 @@ io.on("connection", (socket) => {
     socket.on("start collecting", (data) => {
         answered++;
         if (answered === gameState.players.length) {
+            if (data.stage === "new level") {
+                gameState.level++;
+                collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
+            }
+            //console.log("level", gameState.level);
             //send amount of collectibles to client
             startInterval();
             console.log("start");
@@ -109,10 +114,10 @@ io.on("connection", (socket) => {
 
     socket.on("get hint", (data) => {
         let unusedHints = gameState.song.filter((hint) => !data.hints.includes(hint));
-        console.log("used", data.hints);
-        console.log("unused", unusedHints);
+        //console.log("used", data.hints);
+        //console.log("unused", unusedHints);
         let hint = unusedHints[Utils.getRandomNumber(0, unusedHints.length, true)];
-        console.log("hint", hint);
+        //console.log("hint", hint);
         socket.emit("new hint", {hint: hint});
     })
 })
@@ -125,7 +130,7 @@ async function generateCollectible() {
     //max wait limit is 30 sec
     //min limit depends on level
     let random = Utils.getRandomNumber(10 / gameState.level, 10)*1000;
-    console.log(random);
+    //console.log(random);
     await new Promise(resolve => setTimeout(resolve, random));
     //console.log("item", item);
     currentColletibles.push(item);

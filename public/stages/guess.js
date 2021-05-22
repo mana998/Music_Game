@@ -221,9 +221,10 @@ async function checkAnswers(data) {
         let index = 0;
         for (note of guessingPlayer.answer) {
             points = await showGuessNote(note, index++, points, data.song);
-            //console.log("points", points);
         }
-        guessingPlayer.points += points;
+        if (guessingPlayer.username === player.username) {
+            player.points += points;
+        }
         await new Promise(resolve => setTimeout(resolve, 5000));
         //console.log("after play");
         $('#answer img').remove();
@@ -234,6 +235,12 @@ async function checkAnswers(data) {
     for (note of data.song) {
         await showGuessNote(note);
     }
+    $("main #guess-block").remove();
+    $("#canvas").show();
+    player.answer = [];
+    player.hints = [];
+    socket.emit("client update", {player: player});
+    socket.emit("start collecting", {stage: "new level"});
 }
 
 async function showGuessNote(note, index, points, song){

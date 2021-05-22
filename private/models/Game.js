@@ -54,8 +54,9 @@ class Game {
         //add hints
         this.song = this.getHints(song);
         this.songs.splice(song, 1);
+        console.log("songs", this.songs);
         //this.songs.splice(song, 1);
-        console.log("song",this.song);
+        console.log("song",this.song, this.song.length);
         this.song.map((arrayHint) => {
             collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, hint, Utils.getRandomNumber(1, this.level), "hint", arrayHint));
         });
