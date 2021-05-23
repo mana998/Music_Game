@@ -108,6 +108,7 @@ function move(e) {
             case "ArrowLeft":
                 switchImage("start", left);
                 player.x -= 1 * player.speed;
+                checkSides();
                 //console.log("x",player.x);
                 //console.log("speed",player.speed);
                 break;
@@ -116,6 +117,7 @@ function move(e) {
             case "ArrowRight":
                 switchImage("start", right);
                 player.x += 1 * player.speed;
+                checkSides();
                 //console.log("x",player.x);
                 //console.log("speed",player.speed);
                 break;
@@ -140,4 +142,11 @@ function stop() {
 //send player update
 function updateServer() {
     socket.emit("client update", {player: player});
+}
+
+//check sides
+function checkSides() {
+    if (player.x > 500 - player.width/2) player.x = 0 - player.width/2;
+    if (player.x < 0 - player.width/2) player.x = 500 - player.width/2;
+    console.log(player.x);
 }
