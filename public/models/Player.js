@@ -17,14 +17,10 @@ class Player extends GameObject{
     detectCollisions(collectibles) {
         // Check for collisions
         // use index to break out at first match
-        //console.log("start");
         collectibles.map(collectible => {
             if (rectIntersect(this.x, this.y, this.width, this.height, collectible.x, collectible.y, collectible.width, collectible.height)){
                 collectible.isColliding = true;
-                //console.log("intersection");
-                //collectible.isColliding = true;
                 //add stats according to type
-                //console.log("type", collectibles.type);
                 switch (collectible.type) {
                     case "hint":
                         this.hints.push(collectible.value);
@@ -39,16 +35,13 @@ class Player extends GameObject{
                         $(`#coins-value`).text(this.coins);
                         break;
                     case "hit":
-                        console.log("hiiiit")
                         this.health -= collectible.value;
                         $(`#health-value`).text(this.health);
                         break;
                 }
-                console.log(collectible.type, ":", collectible.value);
-                //console.log(this);
+                //console.log(collectible.type, ":", collectible.value);
             }
         });
-        //console.log("hit");
         //return collectibles.filter(collectible => collectible.isColliding === false);
         return collectibles;
     }

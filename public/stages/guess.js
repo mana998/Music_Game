@@ -224,6 +224,10 @@ async function checkAnswers(data) {
         }
         if (guessingPlayer.username === player.username) {
             player.points += points;
+            if (points < 0) {
+                player.health += points;
+                $(`#health-value`).text(player.health);
+            }
             $(`#points-value`).text(player.points);
         }
         await new Promise(resolve => setTimeout(resolve, 5000));
