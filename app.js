@@ -41,29 +41,26 @@ let timer;
 let answered = 0;
 
 //store connected players
-const sockets = [];
+const sockets = {};
 
 io.on("connection", (socket) => {
 
-    //add player to active players
-    sockets.push(socket.id);
-
     //new player connected
     socket.on("client new player", (data) => {
-        console.log("new plazer");
         if (!gameState) {
             gameState = new Game();
             //load in first batch of songs
             gameState.loadSongs(require(`./private/levels/${levels[(gameState.level-1)/5]}`));
         }
         //check username duplicate
-        console.log("gamestate", gameState)
         if (gameState.on) {
             socket.join('waiting');
             socket.emit("game in progress");
         } else if (gameState.players.some((player) => player.username === data.player.username)){
             socket.emit("duplicate name", {username: data.player.username});
         } else {
+            //add player to active players
+            sockets[socket.id] = data.player;
             gameState.players.push(data.player);
             socket.join('playing');
             io.emit("server new player", {stage: gameState.stage, player: data.player});
@@ -84,7 +81,6 @@ io.on("connection", (socket) => {
             if (!gameState.on) {
                 gameState.on = true;
                 collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
-                console.log('on');
             }
             if (data.stage === "new level") {
                 gameState.level++;
@@ -92,7 +88,6 @@ io.on("connection", (socket) => {
             }
             //send amount of collectibles to client
             startInterval();
-            console.log("start");
             gameState.stage = "collect";
             io.to('playing').emit("collectibles amount", {amount: collectibles.length});
             //recursively generate collectibles
@@ -104,7 +99,6 @@ io.on("connection", (socket) => {
     socket.on("no collectibles left", (data) => {
         //stop interval for frequent updates
         clearInterval(timer);
-        console.log("no left");
         //console.log("next");
         if (gameState.stage !== "guess") {
             io.to('playing').emit("guess", {length : gameState.song.length});
@@ -127,15 +121,20 @@ io.on("connection", (socket) => {
     })
 
     socket.on("client lost", (data) => {
-        gameState.players.splice(gameState.players.indexOf(data.player));
+        gameState.players.splice(gameState.players.indexOf(data.player), 1);
         socket.leave('playing');
         socket.emit("game over");
+        if (gameState.players.length === 0) {
+            //reset game
+            gameState = null;
+            clearInterval(timer);
+        }
     })
 
     socket.on("disconnect", () => {
-        sockets.splice(sockets.indexOf(socket.id),1);
-
-        if (sockets.length === 0) {
+        if (gameState) gameState.players.splice(gameState.players.indexOf(sockets[socket.id]), 1);
+        delete sockets[socket.id];
+        if (Object.keys(sockets).length === 0) {
             //reset game
             gameState = null;
             clearInterval(timer);
@@ -145,21 +144,23 @@ io.on("connection", (socket) => {
 })
 
 async function generateCollectible() {
-    let item = collectibles.shift();
-    //set custom timeout for each collectible
-    //console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
-    //max wait limit is 30 sec
-    //min limit depends on level
-    let random = Utils.getRandomNumber(10 / gameState.level, 10)*1000;
-    //console.log(random);
-    await new Promise(resolve => setTimeout(resolve, random));
-    //console.log("item", item);
-    currentColletibles.push(item);
-    io.to('playing').emit("new collectible", {collectible: item});
-    if (collectibles.length) {
-        generateCollectible();
+    if (gameState) {
+        let item = collectibles.shift();
+        //set custom timeout for each collectible
+        //console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
+        //max wait limit is 30 sec
+        //min limit depends on level
+        let random = Utils.getRandomNumber(10 / gameState.level, 10)*1000;
+        //console.log(random);
+        await new Promise(resolve => setTimeout(resolve, random));
+        //console.log("item", item);
+        currentColletibles.push(item);
+        io.to('playing').emit("new collectible", {collectible: item});
+        if (collectibles.length) {
+            generateCollectible();
+        }
+        //return item;
     }
-    //return item;
 }
 
 function startInterval() {

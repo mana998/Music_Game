@@ -14,18 +14,6 @@ let left;
 let right;
 let middle;
 
-window.addEventListener("load",() => {
-    //reposition canvas to center
-    reposition();
-    //start the game on load
-    setup();
-});
-
-window.addEventListener("resize",() => {
-    //reposition canvas to center
-    reposition();
-});
-
 //draw game state
 socket.on('gameState change', (data) => {
     //console.log("gamestate", data);
@@ -152,8 +140,4 @@ function stop() {
 //send player update
 function updateServer() {
     socket.emit("client update", {player: player});
-}
-
-function reposition() {
-    console.log("reposition");
 }
