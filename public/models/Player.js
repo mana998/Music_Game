@@ -37,6 +37,7 @@ class Player extends GameObject{
                     case "hit":
                         this.health -= collectible.value;
                         $(`#health-value`).text(this.health);
+                        this.checkHealth();
                         break;
                 }
                 //console.log(collectible.type, ":", collectible.value);
@@ -65,6 +66,12 @@ class Player extends GameObject{
             <img class="collectible-img" src="./images/collectibles/${collectible}.png">
             <span id="${collectible}-value">${collectible !== "hints" ? this[collectible] : this[collectible].length}</span>
         </div>`
+    }
+
+    checkHealth() {
+        if (this.health <= 0) {
+            socket.emit("client lost", {player: this})
+        }
     }
 }
 

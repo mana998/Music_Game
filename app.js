@@ -126,6 +126,12 @@ io.on("connection", (socket) => {
         socket.emit("new hint", {hint: hint});
     })
 
+    socket.on("client lost", (data) => {
+        gameState.players.splice(gameState.players.indexOf(data.player));
+        socket.leave('playing');
+        socket.emit("game over");
+    })
+
     socket.on("disconnect", () => {
         sockets.splice(sockets.indexOf(socket.id),1);
 

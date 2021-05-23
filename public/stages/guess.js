@@ -227,6 +227,7 @@ async function checkAnswers(data) {
             if (points < 0) {
                 player.health += points;
                 $(`#health-value`).text(player.health);
+                player.checkHealth();
             }
             $(`#points-value`).text(player.points);
         }

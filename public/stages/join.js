@@ -65,11 +65,26 @@ function confirmStart(state) {
 
 socket.on("game in progress", () => {
     console.log("wait");
-    $("main").append(renderWait())
+    $("main").append(renderWait());
 });
 
 function renderWait() {
     return `<div class="wait"
         <p>Game already in progress.</br>Please wait till current game finishes.<br>(Refresh the page and try again later.)</p>
+    </div>`
+}
+
+socket.on("game over", () => {
+    console.log("game over");
+    $("main").empty();
+    $("main").append(renderGameOver())
+});
+
+function renderGameOver() {
+    console.log("player", player);
+    return `<div class="game-over">
+        <h1>Game Over</h1>
+        <p>Username: ${player.username}</p>
+        <p>Score: ${player.points}</p>
     </div>`
 }
