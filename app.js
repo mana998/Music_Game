@@ -25,14 +25,12 @@ app.get("/", (req, res) => {
 const Game = require("./private/models/Game").Game;
 const UtilsObject = require("./private/models/Utils").Utils;
 
-let gameState = new Game();
+let gameState;
 const Utils = new UtilsObject();
 
-//load in first batch of songs
-gameState.loadSongs(require(`./private/levels/${levels[(gameState.level-1)/5]}`));
 //collectible items
 //initialize for 1st level
-let collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
+//let collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
 //console.log(collectibles);
 let currentColletibles = [];
 
@@ -42,21 +40,32 @@ let timer;
 //answered amount
 let answered = 0;
 
+//store connected players
+const sockets = [];
+
 io.on("connection", (socket) => {
+
+    //add player to active players
+    sockets.push(socket.id);
 
     //new player connected
     socket.on("client new player", (data) => {
         console.log("new plazer");
-        //console.log("plazer", data.player);
+        if (!gameState) {
+            gameState = new Game();
+            //load in first batch of songs
+            gameState.loadSongs(require(`./private/levels/${levels[(gameState.level-1)/5]}`));
+        }
         //check username duplicate
-        if (gameState.players.some((player) => player.username === data.player.username)){
+        console.log("gamestate", gameState)
+        if (gameState.on) {
+            socket.join('waiting');
+            socket.emit("game in progress");
+        } else if (gameState.players.some((player) => player.username === data.player.username)){
             socket.emit("duplicate name", {username: data.player.username});
         } else {
-            console.log("else");
             gameState.players.push(data.player);
-            //player.draw();
-            if (!gameState.on) gameState.on = true;
-            //console.log(gameState);
+            socket.join('playing');
             io.emit("server new player", {stage: gameState.stage, player: data.player});
         }
     })
@@ -66,24 +75,26 @@ io.on("connection", (socket) => {
         //find player with same username
         let player = gameState.players.find(player => player.username === data.player.username);
         //replace with new data
-        //console.log(player);
         gameState.players[gameState.players.indexOf(player)] = data.player;
     })
 
     socket.on("start collecting", (data) => {
         answered++;
         if (answered === gameState.players.length) {
+            if (!gameState.on) {
+                gameState.on = true;
+                collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
+                console.log('on');
+            }
             if (data.stage === "new level") {
                 gameState.level++;
                 collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
             }
-            //console.log("level", gameState.level);
             //send amount of collectibles to client
             startInterval();
             console.log("start");
-            //console.log(collectibles.length);
             gameState.stage = "collect";
-            io.emit("collectibles amount", {amount: collectibles.length});
+            io.to('playing').emit("collectibles amount", {amount: collectibles.length});
             //recursively generate collectibles
             generateCollectible();
             answered = 0;
@@ -96,35 +107,39 @@ io.on("connection", (socket) => {
         console.log("no left");
         //console.log("next");
         if (gameState.stage !== "guess") {
-            console.log("emmited");
-            io.emit("guess", {length : gameState.song.length});
+            io.to('playing').emit("guess", {length : gameState.song.length});
             gameState.stage = "guess";
         }
     })
 
     socket.on("send answer", (data) => {
         answered++;
-        //console.log(answered);
-        //console.log("players", gameState.players.length);
         if (answered === gameState.players.length) {
-            io.emit("check answers", {players: gameState.players, song: gameState.song})
+            io.to('playing').emit("check answers", {players: gameState.players, song: gameState.song})
             answered = 0;
         }
     })
 
     socket.on("get hint", (data) => {
         let unusedHints = gameState.song.filter((hint) => !data.hints.includes(hint));
-        //console.log("used", data.hints);
-        //console.log("unused", unusedHints);
         let hint = unusedHints[Utils.getRandomNumber(0, unusedHints.length, true)];
-        //console.log("hint", hint);
         socket.emit("new hint", {hint: hint});
     })
+
+    socket.on("disconnect", () => {
+        sockets.splice(sockets.indexOf(socket.id),1);
+
+        if (sockets.length === 0) {
+            //reset game
+            gameState = null;
+            clearInterval(timer);
+        }
+    })
+
 })
 
 async function generateCollectible() {
     let item = collectibles.shift();
-    //console.log(collectibles.length);
     //set custom timeout for each collectible
     //console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
     //max wait limit is 30 sec
@@ -134,7 +149,7 @@ async function generateCollectible() {
     await new Promise(resolve => setTimeout(resolve, random));
     //console.log("item", item);
     currentColletibles.push(item);
-    io.emit("new collectible", {collectible: item});
+    io.to('playing').emit("new collectible", {collectible: item});
     if (collectibles.length) {
         generateCollectible();
     }
@@ -144,7 +159,7 @@ async function generateCollectible() {
 function startInterval() {
     //send updates to everyone
     timer = setInterval(() => {
-        if (gameState.on) io.emit('gameState change', gameState);
+        if (gameState && gameState.on) io.to('playing').emit('gameState change', gameState);
         //gameState.on = false;
     }, 1000 / FRAME_RATE);
 }

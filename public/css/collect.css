@@ -52,3 +52,15 @@
     width: 16px;
     height: 16px;
 }
+
+.wait {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: red;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
