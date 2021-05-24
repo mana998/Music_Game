@@ -75,11 +75,26 @@ socket.on("game over", () => {
     $("main").append(renderGameOver())
 });
 
-function renderGameOver() {
+socket.on("game end", (data) => {
+    console.log("game end");
+    $("main").empty();
+    $("main").append(renderGameOver(data.game));
+});
+
+
+function renderPlayerScore(player) {
+    return `<p>${player.username} : ${player.points} points</p>`;
+}
+
+function renderGameOver(game) {
     console.log("player", player);
-    return `<div class="game-over">
-        <h1>Game Over</h1>
-        <p>Username: ${player.username}</p>
-        <p>Score: ${player.points}</p>
-    </div>`
+    let result = `<div class="game-over">
+    <h1>Scoreboard</h1>`;
+    if (game) {
+        game.players.map(gamePlayer => result += renderPlayerScore(gamePlayer));
+    } else {
+        result += renderPlayerScore(player);
+    }
+    result += `</div>`;
+    return result;
 }

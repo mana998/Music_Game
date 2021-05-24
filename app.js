@@ -83,6 +83,15 @@ io.on("connection", (socket) => {
                 collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
             }
             if (data.stage === "new level") {
+                // end of level 5, 10, 15, 16
+                if (gameState.level % 5 === 0) gameState.loadSongs(require(`./private/levels/${levels[(gameState.level)/5]}`));
+                if (gameState.level === 20) {
+                    io.to("playing").emit("game end", {game: gameState});
+                    //reset game
+                    gameState = null;
+                    clearInterval(timer);
+                    return;
+                }
                 gameState.level++;
                 collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
             }

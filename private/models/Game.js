@@ -32,6 +32,7 @@ class Game {
     }
 
     loadSongs(list) {
+        this.songs = [];
         for(let key in list) {
             this.songs.push(list[key]);
         }
