@@ -12,6 +12,9 @@ const sounds = {};
 
 let songLength;
 
+let row = 0;
+let soundLength = 0;
+
 (function loadSounds() {
     for (note of notes) {
         for (let length in lengths) {
@@ -33,6 +36,7 @@ socket.on("guess", (data) => {
     $("#canvas").hide();
     //add guessing screen
     $("main").append(renderGuessingElement());
+    appendRow();
     //console.log("player",player);
     for (hint of player.hints) {
         $("#hints").append(renderHint(hint));
@@ -40,6 +44,18 @@ socket.on("guess", (data) => {
     $("#song-length").text(`/${songLength}`);
     $("#current-length").text("0");
 })
+
+function appendRow() {
+    row++;
+    console.log("append", row);
+    $("#answers").append(`<div id="answer${row}" class="guessing-block"></div>`);
+}
+
+function removeRow() {
+    console.log("remove", row);
+    $(`#answers #answer${row}`).remove();
+    row--;
+}
 
 function renderGuessingElement() {
     return `
@@ -67,8 +83,7 @@ function renderGuessingElement() {
         </div>
         <div id="guess">
             <h2 class="guess-title">GUESS</h2>
-            <div id="answer" class="guessing-block">
-            </div>
+            <div id="answers"></div>
             <div class="option-buttons">
                 <button onClick="play()">PLAY</button>
                 <button onClick="removeLast()">REMOVE LAST</button>
@@ -171,6 +186,10 @@ function addNote(note, length) {
     drawNote(note, length);
     //console.log(player);
     player.answer.push(`${lengths[length]}${note}`);
+    soundLength += lengths[length];
+    if (soundLength / row >= 16 && player.answer.length < songLength) {
+        appendRow();
+    }
     $("#current-length").text(player.answer.length);
     if (player.answer.length === songLength) {
         $(".note-type-button").attr("disabled", true);
@@ -181,16 +200,27 @@ function addNote(note, length) {
 }
 
 function drawNote(note, length) {
-    $("#answer").append(`<img src="./images/notes/${lengths[length]}${(note === 'rest') ? 'rest' : ''}.png" class="${note} ${length}"></img>`);
+    $(`#answer${row}`).append(`<img src="./images/notes/${lengths[length]}${(note === 'rest') ? 'rest' : ''}.png" class="${note} ${length}"></img>`);
 }
 
 function removeLast() {
     if (player.answer.length === songLength) {
         $(".note-type-button").attr("disabled", false);
     }
-    player.answer.pop();
+    let answer = player.answer.pop();
     $("#current-length").text(player.answer.length);
-    $("#answer").children().last().remove();
+    console.log("row", row);
+    $(`#answer${row}`).children().last().remove();
+    console.log("anser", answer);
+    answer = answer.replace(/([0-9\.]+).*/, "$1");
+    console.log("anser", answer);
+    console.log("soundlength", soundLength, row);
+    soundLength -= answer;
+    console.log("soundlength", soundLength, row);
+    if (soundLength / (row - 1) <= 16) {
+        console.log("remove");
+        removeRow();
+    }
 }
 
 function sendAnswer() {
@@ -202,8 +232,8 @@ function sendAnswer() {
 }
 
 socket.on("check answers", (data) => {
-    $('#guess').contents(':not(#answer)').remove();
-    $('#answer img').remove();
+    $('#guess').contents(':not(#answers)').remove();
+    $('#answers div').remove();
     $('#guess').prepend(`<h2 class = "points">Points: <span id="point">0</span></h2>`);
     $('#guess').prepend(`<h1 class = "guessing-player"></h1>`);
     checkAnswers(data);
@@ -212,6 +242,9 @@ socket.on("check answers", (data) => {
 async function checkAnswers(data) {
     data.song = data.song.map((note) => note.replace(/\d+\.(.+)/, "$1"));
     for (let i = 0; i < data.players.length; i++) {
+        row = 0;
+        soundLength = 0;
+        appendRow();
     //for (guessingPlayer of data.players) {
         let guessingPlayer = data.players[i];
         let points = 0;
@@ -233,8 +266,11 @@ async function checkAnswers(data) {
         }
         await new Promise(resolve => setTimeout(resolve, 5000));
         //console.log("after play");
-        $('#answer img').remove();
+        $('#answers div').remove();
     }
+    row = 0;
+    soundLength = 0;
+    appendRow();
     $(".points").text(0).css("color", "black");
     $('.guessing-player').text("CORRECT SONG");
     $('#guess .points').remove();
@@ -263,7 +299,13 @@ async function showGuessNote(note, index, points, song){
             $(".points").text(--points).css("color", "red");
         }
     }
+    console.log("before", soundLength, row, length[duration]);
     drawNote(noteType, duration);
+    soundLength += lengths[duration];
+    console.log("after", songLength, index);
+    if (soundLength / row >= 16 && song.length > index + 1) {
+        appendRow();
+    }
     await playOne(note);
     return points;
 }

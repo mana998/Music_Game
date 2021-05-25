@@ -148,5 +148,5 @@ function updateServer() {
 function checkSides() {
     if (player.x > 500 - player.width/2) player.x = 0 - player.width/2;
     if (player.x < 0 - player.width/2) player.x = 500 - player.width/2;
-    console.log(player.x);
+    //console.log(player.x);
 }
