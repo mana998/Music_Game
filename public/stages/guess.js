@@ -36,14 +36,30 @@ socket.on("guess", (data) => {
     $("#canvas").hide();
     //add guessing screen
     $("main").append(renderGuessingElement());
+    renderEmptyHintsTable();
     appendRow();
     //console.log("player",player);
     for (hint of player.hints) {
-        $("#hints").append(renderHint(hint));
+        renderHint(hint);
     }
     $("#song-length").text(`/${songLength}`);
     $("#current-length").text("0");
 })
+
+function renderEmptyHintsTable() {
+    let hints = `<button id="close-hints-button" onClick="$('#hints').hide()">X</button>
+        <h3>HINTS</h3>
+        <table id="#hints-table">`;
+    for (let i = 0; i < songLength; i++) {
+        hints += (`<tr>
+            <td id="hint-position-${i}">${i+1}.</td>
+            <td id="hint-note-${i}">?</td>
+            <td id="hint-duration-${i}">?</td>
+        </tr>`);
+    }
+    hints += `</table>`;
+    $("#hints").append(hints);
+}
 
 function appendRow() {
     row++;
@@ -83,6 +99,7 @@ function renderGuessingElement() {
         </div>
         <div id="guess">
             <h2 class="guess-title">GUESS</h2>
+            <button class="show-hints" onClick="$('#hints').show()">HINTS</button>
             <div id="answers"></div>
             <div class="option-buttons">
                 <button onClick="play()">PLAY</button>
@@ -92,9 +109,7 @@ function renderGuessingElement() {
             <div class="length"><span id="current-length"></span><span id="song-length"></span></div>
             <div id="options">
             </div>
-            <h3>HINTS</h3>
-            <ul id="hints">
-            </ul>
+            <div id="hints" style="display:none"></div>
         </div>
     </div>
     `
@@ -161,7 +176,9 @@ function renderHint(hint) {
     duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
     let note = hint.replace(/\d*\.[0-9.]+(.+)/, "$1");
     //console.log("Position", position, "duration", duration, "note", note);
-    return `<li class="hint">Position: ${Number(position) + 1}, Note ${note}, Duration ${duration}</li>`;
+    $(`#hint-note-${position}`).text(note !== "-" ? note.toUpperCase() : "REST");
+    $(`#hint-duration-${position}`).text(duration);
+    //return `<li class="hint">Position: ${Number(position) + 1}, Note ${note}, Duration ${duration}</li>`;
 }
 
 function selectLength(note) {
@@ -299,10 +316,8 @@ async function showGuessNote(note, index, points, song){
             $(".points").text(--points).css("color", "red");
         }
     }
-    console.log("before", soundLength, row, length[duration]);
     drawNote(noteType, duration);
     soundLength += lengths[duration];
-    console.log("after", songLength, index);
     if (soundLength / row >= 16 && song.length > index + 1) {
         appendRow();
     }
@@ -340,7 +355,7 @@ socket.on("new hint", (data) => {
     //console.log("player hitns", player.hints);
     player.hints.push(data.hint);
     //console.log("player hints", player.hints);
-    $("#hints").append(renderHint(data.hint));
+    renderHint(data.hint);
     $(`#hints-value`).text(player.hints.length);
     $(`#coins-value`).text(player.coins);
     checkMoney();
