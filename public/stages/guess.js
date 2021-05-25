@@ -227,7 +227,8 @@ function removeLast() {
     let answer = player.answer.pop();
     $("#current-length").text(player.answer.length);
     console.log("row", row);
-    $(`#answer${row}`).children().last().remove();
+    console.log("l", soundLength/16, Math.ceil(soundLength / 16));
+    $(`#answer${Math.ceil(soundLength / 16)}`).children().last().remove();
     console.log("anser", answer);
     answer = answer.replace(/([0-9\.]+).*/, "$1");
     console.log("anser", answer);
