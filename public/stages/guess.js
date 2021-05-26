@@ -49,15 +49,15 @@ socket.on("guess", (data) => {
 function renderEmptyHintsTable() {
     let hints = `<button id="close-hints-button" onClick="$('#hints').hide()">X</button>
         <h3>HINTS</h3>
-        <table id="#hints-table">`;
+        <div id="hints-table">`;
     for (let i = 0; i < songLength; i++) {
-        hints += (`<tr>
-            <td id="hint-position-${i}">${i+1}.</td>
-            <td id="hint-note-${i}">?</td>
-            <td id="hint-duration-${i}">?</td>
-        </tr>`);
+        hints += (`<div class="grid-item">
+            <div class="hint-value" id="hint-position-${i}">${i+1}.</div>
+            <div class="hint-value" id="hint-note-${i}">?</div>
+            <div class="hint-value" id="hint-duration-${i}">?</div>
+        </div>`);
     }
-    hints += `</table>`;
+    hints += `</div>`;
     $("#hints").append(hints);
 }
 

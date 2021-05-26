@@ -70,24 +70,33 @@ button {
     float: right;
 }
 
-table, th, td {
-    border: 1px solid black;
+#hints-table {
+    display: grid;
     border-collapse: collapse;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(12, 1fr);
 }
 
-tr {
+.grid-item {
+    display: grid;
+    min-height: 1em;
+    min-width: 200px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.hint-value {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 0.5em;
     min-height: 1em;
 }
 
-td {
-    padding: 0.5em;
-}
-
-tr:nth-child(even) {
+.grid-item:nth-child(even) {
     background-color: #eee;
 }
 
-tr:nth-child(odd) {
+.grid-item:nth-child(odd) {
     background-color: #fff;
 }
 
