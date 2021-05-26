@@ -142,6 +142,8 @@ async function play() {
 
 async function playOne(note) {
     let duration = note.replace(/(\d(\.\d)?)[a-z1-9]*/, '$1') / 2;
+    //console.log(note);
+    //note = note.replace(/-/, 'rest');
     //console.log("duration", duration);
     //console.log("play one before",  new Date().getTime());
     await playNote(note, duration);
@@ -293,7 +295,7 @@ async function checkAnswers(data) {
     $('.guessing-player').text("CORRECT SONG");
     $('#guess .points').remove();
     for (note of data.song) {
-        await showGuessNote(note);
+        await showGuessNote(note, -1, '', data.song);
     }
     $("main #guess-block").remove();
     $("#canvas").show();
@@ -322,6 +324,7 @@ async function showGuessNote(note, index, points, song){
     if (soundLength / row >= 16 && song.length > index + 1) {
         appendRow();
     }
+    note = note.replace("-", "rest");
     await playOne(note);
     return points;
 }
