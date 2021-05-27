@@ -20,7 +20,7 @@ socket.on('gameState change', (data) => {
     /*if(data.players.length > 1) {
         console.log(data.players);
     }*/
-    fakeIt();
+    //fakeIt();
     //check if player is in the game
     draw(data);
 });
