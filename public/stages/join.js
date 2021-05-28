@@ -2,27 +2,55 @@
 let answered = false;
 let collecting = false;
 
+//check if 1 checkbox is already
+
 window.addEventListener("load",() => {
     setup();
 });
 
-
 //setup new game
 function setup() {
-    $("main").append(`<div class="new-player">
-        <input id="username-input" class="username-input" type = "text" required>
+    let result = `<div class="character-choice">
+    <h2>Choose your character</h2>
+    <ul class="character-selection-list">`;
+    characters.map((character, index) => {
+        result += `<li class="character-select-list-item">
+            <input type="radio" class="character-input" id="character-${index}" name="character" value="${index}">
+            <label for="character-${index}" class="character-label" id="character-label-${index}"></label>
+        </li>`
+    })
+    result += `</ul>
+        <div class="new-player">
+        <input id="username-input" class="username-input" type = "text" placeholder="Username" required>
         <button class="confirm-username-button" onClick="setupPlayer()">JOIN</button>
-    </div>`);
+        </div>
+        </div>`
+    $("main").append(result);
+    //change position of picture to show specific character
+    characters.map((character, index) => {
+        let row = (index % 4 * 3) + 1;
+        let column = Math.floor(index/4) * 4;
+        $(`#character-label-${index}`).css("background-position", `left calc(${row} * -32px) top calc(${column} * -32px)`);
+        $(`#character-${index}`).attr("onClick", `selectCharacter(${index})`);
+    });
+}
+
+function selectCharacter(i) {
+    $(`.character-label`).addClass("disabled");
+    $(`#character-label-${i}`).removeClass("disabled");
+    character.right = characters[i].right;
+    character.left = characters[i].left;
+    character.middle = characters[i].middle; 
 }
 
 function setupPlayer() {
+    if (jQuery.isEmptyObject(character)) {
+        selectCharacter(0);
+    }
     //select img
     let img = new Image();
     img.src = "./images/character/bard.png";
-    let initial = new Img("./images/character/bard.png", 2, 0, 0, 2, 1);
-    right = [2, 0];
-    left = [1, 0];
-    middle = [0, 1]; 
+    let initial = new Img("./images/character/bard.png", character.right[0], character.right[1], 0, 2, 1);
     let username = $("#username-input").val();
     player = new Player(
         canvas.width/2, canvas.height - characterHeight, 
@@ -31,8 +59,8 @@ function setupPlayer() {
         initial
     );
 
-    console.log("username", username);
-    console.log("player", player);
+    //console.log("username", username);
+    //console.log("player", player);
     //send data to the server
     socket.emit("client new player", {player: player});
     player.showCollectibles();

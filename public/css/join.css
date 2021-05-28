@@ -1,0 +1,79 @@
+.game-over {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.new-player {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.character-selection-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    list-style-type: none;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding-inline-start: 0;
+}
+
+.character-label {
+    display: block;
+    width: 32px;
+    height: 32px;
+    background-image: url("../images/character/bard.png");
+    cursor: pointer;
+}
+
+.character-select-list-item {
+    padding: 0.5em;
+}
+
+.character-input {
+    display: none;
+}
+
+.disabled {
+    filter: grayscale(100%);
+}
+
+.character-choice {
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+}
+
+.username-input, .waiting {
+    grid-column: 1 / 3;
+    display: block;
+    align-self: center;
+}
+
+.new-player button {
+    width: 95%;
+    padding: 0.5em;
+    margin: 1%;
+    align-self: center;
+    grid-row-start: 2;
+}
+
+
+.wait {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: red;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+}

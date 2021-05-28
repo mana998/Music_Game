@@ -10,9 +10,7 @@ const characterWidth = 32;
 const characterHeight = 32;
 
 //left, right, middle animation values
-let left;
-let right;
-let middle;
+let character = {};
 
 //draw game state
 socket.on('gameState change', (data) => {
@@ -28,7 +26,7 @@ socket.on('gameState change', (data) => {
 //set collectible amount
 socket.on('collectibles amount', (data) => {
     $(".start-button").hide()
-    $(".new-player").hide();
+    $(".character-choice").hide();
     collectiblesAmount = data.amount;
 });
 
@@ -106,7 +104,7 @@ function move(e) {
             case "A":
             case "a":
             case "ArrowLeft":
-                switchImage("start", left);
+                switchImage("start", character.left);
                 player.x -= 1 * player.speed;
                 checkSides();
                 //console.log("x",player.x);
@@ -115,7 +113,7 @@ function move(e) {
             case "D":
             case "d":
             case "ArrowRight":
-                switchImage("start", right);
+                switchImage("start", character.right);
                 player.x += 1 * player.speed;
                 checkSides();
                 //console.log("x",player.x);
@@ -133,8 +131,8 @@ function move(e) {
 //change animation to standing
 function stop() {
     if (collecting) {
-        switchImage("start", middle);
-        switchImage("current", middle);
+        switchImage("start", character.middle);
+        switchImage("current", character.middle);
         updateServer();
     }
 }

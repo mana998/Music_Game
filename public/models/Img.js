@@ -33,10 +33,10 @@ class Img {
             this.currentColumn++;
             this.currentSpeed = 0;
         }
-        if (this.currentColumn > this.columns) {
+        if (this.currentColumn > this.startColumn + this.columns) {
             this.currentColumn = this.startColumn;
             this.currentRow++;
-            if (this.currentRow > this.rows){
+            if (this.currentRow > this.startRow + this.rows){
                 this.currentRow = this.startRow;
             }
         }
