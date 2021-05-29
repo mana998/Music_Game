@@ -4,13 +4,32 @@ let collecting = false;
 
 //check if 1 checkbox is already
 
-window.addEventListener("load",() => {
-    setup();
+/*window.addEventListener("load",() => {
+    showRules();
 });
+
+function showRules() {
+    renderFirstInfo();
+    setup();
+}*/
+
+function showFirstInfo() {
+    $("#second-help").hide();
+    $("#first-help").show();
+    console.log("first");
+}
+
+function showSecondInfo() {
+    $("#second-help").show();
+    $("#first-help").hide();
+    console.log("second");
+}
 
 //setup new game
 function setup() {
-    let result = `<div class="character-choice">
+    $("#second-help").hide();
+    $("#canvas").show();
+    let result = `<div class="character-choice center">
     <h2>Choose your character</h2>
     <ul class="character-selection-list">`;
     characters.map((character, index) => {
@@ -116,7 +135,7 @@ function renderPlayerScore(player) {
 
 function renderGameOver(game) {
     console.log("player", player);
-    let result = `<div class="game-over">
+    let result = `<div class="game-over center">
     <h1>Scoreboard</h1>`;
     if (game) {
         game.players.map(gamePlayer => result += renderPlayerScore(gamePlayer));

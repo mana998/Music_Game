@@ -20,6 +20,13 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <main>
+        <div id="first-help" class="center">
+            <button id="next-arrow" onClick="showSecondInfo()">-&gt;</button>
+        </div>
+        <div id="second-help" class="center">
+            <button id="previous-arrow" onClick="showFirstInfo()">&lt;-</button>
+            <button id="close-button" onClick="setup()">X</button>
+        </div>
         <!-- need exact value as it couldnt handle multiple players -->
         <canvas id ="canvas" width="500", height="500"></canvas>
     </main>

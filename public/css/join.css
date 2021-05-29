@@ -1,10 +1,13 @@
 .game-over {
+    text-align: center;
+}
+
+.center {
     position: absolute;
     left: 50%;
     top: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    text-align: center;
 }
 
 .new-player {
@@ -43,14 +46,6 @@
     filter: grayscale(100%);
 }
 
-.character-choice {
-    top: 50%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    position: absolute;
-}
-
 .username-input, .waiting {
     grid-column: 1 / 3;
     display: block;
@@ -76,4 +71,39 @@
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     text-align: center;
+}
+
+#second-help {
+    background-image: url("../images/info/part2.png");
+    width: 24em;
+    height: 28em;
+    display: none;
+    background-size: cover;
+}
+
+#first-help {
+    background-image: url("../images/info/part1.png");
+    width: 24em;
+    height: 28em;
+    background-size: cover;
+}
+
+#previous-arrow {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+#next-arrow {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+#close-button {
+    float: right;
+}
+
+#canvas {
+    display: none;
 }
