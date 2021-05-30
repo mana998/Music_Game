@@ -89,7 +89,7 @@ function renderGuessingElement() {
             <div class="shop-item">
                 <img src="./images/collectibles/speed.png">
                 <span>Price: 20</span>
-                <button id="buy-speed-button" ${player.coins < 20 ? 'disabled' : ''} onClick="buySpeed();">BUY Speed</button>
+                <button id="buy-speed-button" ${(player.coins < 20 || player.speed === 15) ? 'disabled' : ''} onClick="buySpeed();">BUY Speed</button>
             </div>
             <div class="shop-item">
                 <img src="./images/collectibles/hints.png">
@@ -369,7 +369,7 @@ socket.on("new hint", (data) => {
 });
 
 function checkMoney() {
-    if (player.coins < 20) {
+    if (player.coins < 20 || player.speed === 15) {
         $("#buy-speed-button").attr("disabled", true);
     }
     if (player.coins < 10 || player.hints.length === songLength) {
