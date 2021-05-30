@@ -12,8 +12,8 @@ const sounds = {};
 
 let songLength;
 
-let row = 0;
-let soundLength = 0;
+let row;
+let soundLength;
 
 (function loadSounds() {
     for (note of notes) {
@@ -30,6 +30,8 @@ const answer = [];
 
 socket.on("guess", (data) => {
     console.log("guessing");
+    row = 0;
+    soundLength = 0;
     songLength = data.length;
     //console.log(songLength);
     //hide canvas
