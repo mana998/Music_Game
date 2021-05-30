@@ -294,8 +294,9 @@ async function checkAnswers(data) {
     $(".points").text(0).css("color", "black");
     $('.guessing-player').text("CORRECT SONG");
     $('#guess .points').remove();
+    let index = 0;
     for (note of data.song) {
-        await showGuessNote(note, -1, '', data.song);
+        await showGuessNote(note, index++, '', data.song);
     }
     $("main #guess-block").remove();
     $("#canvas").show();
@@ -312,7 +313,7 @@ async function showGuessNote(note, index, points, song){
     noteType = noteType.replace("-", "rest");
     duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
     drawNote(noteType, duration);
-    if (index > -1) {
+    if (typeof(points) === "number" && index > -1) {
         song[index] = song[index].replace("-", "rest");
         if (note === song[index]) {
             $(".points").text(++points).css("color", "green");
@@ -323,7 +324,7 @@ async function showGuessNote(note, index, points, song){
         }
     }
     soundLength += lengths[duration];
-        if (soundLength / row >= 16 && song.length > index + 1) {
+    if (soundLength / row >= 16 && song.length > index + 1 ) {
         appendRow();
     }
     note = note.replace("-", "rest");
