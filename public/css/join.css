@@ -89,21 +89,53 @@
 }
 
 #previous-arrow {
-    position: absolute;
+    background: url("../images/info/arrow-left.png");
+    background-size: contain;
     left: 0;
     bottom: 0;
 }
 
 #next-arrow {
-    position: absolute;
+    background: url("../images/info/arrow-right.png");
+    background-size: contain;
     right: 0;
     bottom: 0;
 }
 
-#close-button {
+.arrow-button {
+    height: 2.5em;
+    width: 3em;
+    padding: 0;
+    position: absolute;
+    border: none;
+}
+
+#close-button, #close-hints-button {
+    background: url("../images/info/cross.png");
+    border-radius: 5px;
+    background-size: contain;
     float: right;
+    width: 2em;
+    height: 2em;
 }
 
 #canvas {
     display: none;
+}
+
+#next-arrow:hover, #previous-arrow:hover, #close-button:hover, button:hover:enabled {
+    background-color: #ffffff80;
+    background-blend-mode: multiply;
+}
+
+.character-label.enabled:hover {
+    filter: grayscale(0%);
+}
+
+button:disabled {
+    filter: grayscale(100%);
+}
+
+button:hover:disabled {
+    filter: grayscale(100%);
 }

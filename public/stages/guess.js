@@ -47,7 +47,7 @@ socket.on("guess", (data) => {
 })
 
 function renderEmptyHintsTable() {
-    let hints = `<button id="close-hints-button" onClick="$('#hints').hide()">X</button>
+    let hints = `<button id="close-hints-button" onClick="$('#hints').hide()"></button>
         <h3>HINTS</h3>
         <div id="hints-table">`;
     for (let i = 0; i < songLength; i++) {
@@ -311,17 +311,19 @@ async function showGuessNote(note, index, points, song){
     let noteType = note.replace(/\d(\.\d)?([a-z1-9-]*)/, '$2');
     noteType = noteType.replace("-", "rest");
     duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
+    drawNote(noteType, duration);
     if (index > -1) {
         song[index] = song[index].replace("-", "rest");
         if (note === song[index]) {
             $(".points").text(++points).css("color", "green");
+            $(`#answer${row}`).children().last().css("filter", "brightness(5) hue-rotate(142deg) contrast(1) saturate(6)")
         } else {
             $(".points").text(--points).css("color", "red");
+            $(`#answer${row}`).children().last().css("filter", "brightness(4.5) hue-rotate(16deg) contrast(0.75) saturate(10)")
         }
     }
-    drawNote(noteType, duration);
     soundLength += lengths[duration];
-    if (soundLength / row >= 16 && song.length > index + 1) {
+        if (soundLength / row >= 16 && song.length > index + 1) {
         appendRow();
     }
     note = note.replace("-", "rest");

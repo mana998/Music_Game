@@ -18,8 +18,10 @@
 }
 
 button {
-    background-color: rgb(226, 255, 221);
-    border: none;
+    background: none;
+    border: 2px solid #59a297;
+    border-radius: 25px;
+    color: #248588;
     outline: none;
     padding: 0.5em;
     margin: 0.5em;

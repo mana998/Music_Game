@@ -30,12 +30,12 @@ function setup() {
     $("#second-help").hide();
     $("#canvas").show();
     let result = `<div class="character-choice center">
-    <h2>Choose your character</h2>
+    <h2>CHOOSE YOUR CHARACTER:</h2>
     <ul class="character-selection-list">`;
     characters.map((character, index) => {
         result += `<li class="character-select-list-item">
             <input type="radio" class="character-input" id="character-${index}" name="character" value="${index}">
-            <label for="character-${index}" class="character-label" id="character-label-${index}"></label>
+            <label for="character-${index}" class="character-label enabled" id="character-label-${index}"></label>
         </li>`
     })
     result += `</ul>
@@ -66,6 +66,9 @@ function setupPlayer() {
     if (jQuery.isEmptyObject(character)) {
         selectCharacter(0);
     }
+    //remove change of character
+    $(".character-input").removeAttr("onclick");
+    $(`.character-label`).removeClass("enabled");
     //select img
     let img = new Image();
     img.src = "./images/character/bard.png";
