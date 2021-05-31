@@ -159,7 +159,7 @@ async function generateCollectible() {
         //console.log("gamestate", gameState.level, " ", 10 / gameState.level, " ", 30)
         //max wait limit is 30 sec
         //min limit depends on level
-        let random = Utils.getRandomNumber(10 / gameState.level, 10)*1000;
+        let random = Utils.getRandomNumber(10 - gameState.level / 3, 15)*1000;
         //console.log(random);
         await new Promise(resolve => setTimeout(resolve, random));
         //console.log("item", item);

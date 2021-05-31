@@ -41,14 +41,9 @@ class Game {
     generateCollectibles(song) {
         let collectibles = [];
         for(let [key, value] of items) {
-            let amount = Utils.getRandomNumber(5, this.level * 10);
-            //make sure there are not too many items
-            //need to think more about this
-            while (amount > 100) {
-                amount /= 10;
-            }
+            let amount = Utils.getRandomNumber(5, 10 + this.level * 2);
             for (let i = 0; i < amount; i++) {
-                collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, value, Utils.getRandomNumber(1, 20), key))
+                collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, value, Utils.getRandomNumber(1, 5 + this.level), key))
                 //collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, value, Utils.getRandomNumber(1, this.level), key))
             }
         }
@@ -59,7 +54,7 @@ class Game {
         //this.songs.splice(song, 1);
         console.log("song",this.song, this.song.length);
         this.song.map((arrayHint) => {
-            collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, hint, Utils.getRandomNumber(1, this.level), "hint", arrayHint));
+            collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, hint, Utils.getRandomNumber(1, 5 + this.level), "hint", arrayHint));
         });
         Utils.shuffleArray(collectibles);
         //console.log(collectibles);
