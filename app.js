@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
             socket.emit("duplicate name", {username: data.player.username});
         } else {
             //add player to active players
-            sockets[socket.id] = data.player;
+            sockets[socket.id] = data.player.username;
             gameState.players.push(data.player);
             socket.join('playing');
             io.emit("server new player", {stage: gameState.stage, player: data.player});
@@ -141,7 +141,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnect", () => {
-        if (gameState) gameState.players.splice(gameState.players.indexOf(sockets[socket.id]), 1);
+        if (gameState) gameState.players = gameState.players.filter((player) => player.username !== sockets[socket.id]);
         delete sockets[socket.id];
         if (Object.keys(sockets).length === 0) {
             //reset game
