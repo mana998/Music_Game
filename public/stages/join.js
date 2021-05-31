@@ -63,29 +63,31 @@ function selectCharacter(i) {
 }
 
 function setupPlayer() {
-    if (jQuery.isEmptyObject(character)) {
-        selectCharacter(0);
-    }
-    //remove change of character
-    $(".character-input").removeAttr("onclick");
-    $(`.character-label`).removeClass("enabled");
-    //select img
-    let img = new Image();
-    img.src = "./images/character/bard.png";
-    let initial = new Img("./images/character/bard.png", character.right[0], character.right[1], 0, 2, 1);
     let username = $("#username-input").val();
-    player = new Player(
-        canvas.width/2, canvas.height - characterHeight, 
-        32, 32,
-        username,
-        initial
-    );
+    if (username) {
+        if (jQuery.isEmptyObject(character)) {
+            selectCharacter(0);
+        }
+        //remove change of character
+        $(".character-input").removeAttr("onclick");
+        $(`.character-label`).removeClass("enabled");
+        //select img
+        let img = new Image();
+        img.src = "./images/character/bard.png";
+        let initial = new Img("./images/character/bard.png", character.right[0], character.right[1], 0, 2, 1);
+        player = new Player(
+            canvas.width/2, canvas.height - characterHeight, 
+            32, 32,
+            username,
+            initial
+        );
 
-    //console.log("username", username);
-    //console.log("player", player);
-    //send data to the server
-    socket.emit("client new player", {player: player});
-    player.showCollectibles();
+        //console.log("username", username);
+        //console.log("player", player);
+        //send data to the server
+        socket.emit("client new player", {player: player});
+        player.showCollectibles();
+    }
 }
 
 //player successfully added to the server
