@@ -204,13 +204,13 @@ function generateLengths(note) {
 
 function addNote(note, length) {
     $("body .length-block").remove();
-    drawNote(note, length);
     //console.log(player);
     player.answer.push(`${lengths[length]}${note}`);
-    soundLength += lengths[length];
     if (soundLength / row >= 16 && player.answer.length < songLength) {
         appendRow();
     }
+    drawNote(note, length);
+    soundLength += lengths[length];
     $("#current-length").text(player.answer.length);
     if (player.answer.length === songLength) {
         $(".note-type-button").attr("disabled", true);
@@ -232,14 +232,15 @@ function removeLast() {
     $("#current-length").text(player.answer.length);
     console.log("row", row);
     console.log("l", soundLength/16, Math.ceil(soundLength / 16));
-    $(`#answer${Math.ceil(soundLength / 16)}`).children().last().remove();
+
     console.log("anser", answer);
     answer = answer.replace(/([0-9\.]+).*/, "$1");
+    $(`#answer${Math.ceil((soundLength - answer)/ 16 + 0.0001)}`).children().last().remove();
     console.log("anser", answer);
     console.log("soundlength", soundLength, row);
     soundLength -= answer;
     console.log("soundlength", soundLength, row);
-    if (soundLength / (row - 1) <= 16) {
+    if (soundLength / (row - 1) < 16) {
         console.log("remove");
         removeRow();
     }
