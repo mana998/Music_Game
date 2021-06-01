@@ -99,7 +99,7 @@ socket.on("game in progress", () => {
 
 function renderWait() {
     return `<div class="wait"
-        <p>Game already in progress.</br>Please wait till current game finishes.<br>(Refresh the page and try again later.)</p>
+        <p>Game already in progress.</br>Please wait till the current game finishes.<br>(Refresh the page and try again later.)</p>
     </div>`
 }
 
