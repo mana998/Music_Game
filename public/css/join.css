@@ -126,6 +126,12 @@
 #next-arrow:hover, #previous-arrow:hover, #close-button:hover, button:hover:enabled {
     background-color: #ffffff80;
     background-blend-mode: multiply;
+    color: #9fc5ac;
+    border: 2px solid #59a297;
+}
+
+#next-arrow:hover, #previous-arrow:hover {
+    border: none;
 }
 
 .character-label.enabled:hover {
