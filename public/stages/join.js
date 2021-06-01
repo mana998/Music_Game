@@ -2,27 +2,14 @@
 let answered = false;
 let collecting = false;
 
-//check if 1 checkbox is already
-
-/*window.addEventListener("load",() => {
-    showRules();
-});
-
-function showRules() {
-    renderFirstInfo();
-    setup();
-}*/
-
 function showFirstInfo() {
     $("#second-help").hide();
     $("#first-help").show();
-    console.log("first");
 }
 
 function showSecondInfo() {
     $("#second-help").show();
     $("#first-help").hide();
-    console.log("second");
 }
 
 //setup new game
@@ -81,9 +68,6 @@ function setupPlayer() {
             username,
             initial
         );
-
-        //console.log("username", username);
-        //console.log("player", player);
         //send data to the server
         socket.emit("client new player", {player: player});
         player.showCollectibles();
@@ -92,7 +76,6 @@ function setupPlayer() {
 
 //player successfully added to the server
 socket.on('server new player', (data) => {
-    console.log(data);
     if (data.player && player && data.player.username === player.username) {
         $(".new-player").append(`<button class="start-button" onClick="confirmStart('${data.stage}');">START</button>`);
         $(".username-input").attr("disabled", true);
@@ -111,7 +94,6 @@ function confirmStart(state) {
 }
 
 socket.on("game in progress", () => {
-    console.log("wait");
     $("main").append(renderWait());
 });
 
@@ -122,13 +104,11 @@ function renderWait() {
 }
 
 socket.on("game over", () => {
-    console.log("game over");
     $("main").empty();
     $("main").append(renderGameOver())
 });
 
 socket.on("game end", (data) => {
-    console.log("game end");
     $("main").empty();
     $("main").append(renderGameOver(data.game));
 });
@@ -139,7 +119,6 @@ function renderPlayerScore(player) {
 }
 
 function renderGameOver(game) {
-    console.log("player", player);
     let result = `<div class="game-over center">
     <h1>Scoreboard</h1>`;
     if (game) {

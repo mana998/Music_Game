@@ -8,8 +8,6 @@ class Player extends GameObject{
         this.hints = [];
         this.health = 5;
         this.points = 0;
-        //then divide innerWidth by speed to get final value
-        //this.speed = 1000 - (5 * 100);
         this.speed = 5;
         this.answer = [];
     }
@@ -40,10 +38,8 @@ class Player extends GameObject{
                         this.checkHealth();
                         break;
                 }
-                //console.log(collectible.type, ":", collectible.value);
             }
         });
-        //return collectibles.filter(collectible => collectible.isColliding === false);
         return collectibles;
     }
 

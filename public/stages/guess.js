@@ -29,18 +29,15 @@ let soundLength;
 const answer = [];
 
 socket.on("guess", (data) => {
-    console.log("guessing");
     row = 0;
     soundLength = 0;
     songLength = data.length;
-    //console.log(songLength);
     //hide canvas
     $("#canvas").hide();
     //add guessing screen
     $("main").append(renderGuessingElement());
     renderEmptyHintsTable();
     appendRow();
-    //console.log("player",player);
     for (hint of player.hints) {
         renderHint(hint);
     }
@@ -65,12 +62,10 @@ function renderEmptyHintsTable() {
 
 function appendRow() {
     row++;
-    console.log("append", row);
     $("#answers").append(`<div id="answer${row}" class="guessing-block"></div>`);
 }
 
 function removeRow() {
-    console.log("remove", row);
     $(`#answers #answer${row}`).remove();
     row--;
 }
@@ -144,21 +139,12 @@ async function play() {
 
 async function playOne(note) {
     let duration = note.replace(/(\d(\.\d)?)[a-z1-9]*/, '$1') / 2;
-    //console.log(note);
-    //note = note.replace(/-/, 'rest');
-    //console.log("duration", duration);
-    //console.log("play one before",  new Date().getTime());
     await playNote(note, duration);
-    //console.log("play one after",  new Date().getTime());
 }
 
 async function playNote(note, duration) {
     new Sound(`./sounds/notes/${note}.mp3`).play();
-    //console.log("note", note, "duration", duration);
-    //sounds[note].play();
-    //console.log("play note before", new Date().getTime());
     await new Promise(resolve => setTimeout(resolve, duration * 1000));
-    //console.log("play note after duration", duration,  new Date().getTime());
 }
 
 function renderOptions() {
@@ -176,13 +162,10 @@ function renderOption(note) {
 function renderHint(hint) {
     let position = hint.split('.')[0];
     let duration = hint.replace(/\d*\.([0-9.]+).+/, "$1");
-    //console.log("Duration extract", duration);
     duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
     let note = hint.replace(/\d*\.[0-9.]+(.+)/, "$1");
-    //console.log("Position", position, "duration", duration, "note", note);
     $(`#hint-note-${position}`).text(note !== "-" ? note.toUpperCase() : "REST");
     $(`#hint-duration-${position}`).text(duration);
-    //return `<li class="hint">Position: ${Number(position) + 1}, Note ${note}, Duration ${duration}</li>`;
 }
 
 function selectLength(note) {
@@ -204,7 +187,6 @@ function generateLengths(note) {
 
 function addNote(note, length) {
     $("body .length-block").remove();
-    //console.log(player);
     player.answer.push(`${lengths[length]}${note}`);
     if (soundLength / row >= 16 && player.answer.length < songLength) {
         appendRow();
@@ -230,24 +212,16 @@ function removeLast() {
     }
     let answer = player.answer.pop();
     $("#current-length").text(player.answer.length);
-    console.log("row", row);
-    console.log("l", soundLength/16, Math.ceil(soundLength / 16));
 
-    console.log("anser", answer);
     answer = answer.replace(/([0-9\.]+).*/, "$1");
     $(`#answer${Math.ceil((soundLength - answer)/ 16 + 0.0001)}`).children().last().remove();
-    console.log("anser", answer);
-    console.log("soundlength", soundLength, row);
     soundLength -= answer;
-    console.log("soundlength", soundLength, row);
     if (soundLength / (row - 1) < 16) {
-        console.log("remove");
         removeRow();
     }
 }
 
 function sendAnswer() {
-    //console.log(player.answer);
     socket.emit("client update", {player: player});
     socket.emit("send answer", {player: player});
     $("button").attr("disabled", true);
@@ -288,7 +262,6 @@ async function checkAnswers(data) {
             $(`#points-value`).text(player.points);
         }
         await new Promise(resolve => setTimeout(resolve, 5000));
-        //console.log("after play");
         $('#answers div').remove();
     }
     row = 0;
@@ -340,7 +313,6 @@ function buyHealth() {
     player.health += 1;
     $(`#health-value`).text(player.health);
     $(`#coins-value`).text(player.coins);
-    //console.log("health", player.health);
     checkMoney();
 }
 
@@ -349,22 +321,17 @@ function buySpeed() {
     player.speed += 1;
     $(`#speed-value`).text(player.speed);
     $(`#coins-value`).text(player.coins);
-    //console.log("speed", player.speed);
     checkMoney();
 }
 
 
 function buyHint() {
     player.coins -= 10;
-    //console.log("hint");
     socket.emit("get hint", {hints: player.hints});
 }
 
 socket.on("new hint", (data) => {
-    //console.log("shint", data.hint);
-    //console.log("player hitns", player.hints);
     player.hints.push(data.hint);
-    //console.log("player hints", player.hints);
     renderHint(data.hint);
     $(`#hints-value`).text(player.hints.length);
     $(`#coins-value`).text(player.coins);

@@ -14,10 +14,6 @@ let character = {};
 
 //draw game state
 socket.on('gameState change', (data) => {
-    //console.log("gamestate", data);
-    /*if(data.players.length > 1) {
-        console.log(data.players);
-    }*/
     //fakeIt();
     //check if player is in the game
     draw(data);
@@ -34,10 +30,7 @@ socket.on('collectibles amount', (data) => {
 function draw(data) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     //detect collisions
-    //console.log("det", player);
     collectibles = player.detectCollisions(collectibles);
-    //console.log(collectibles);
-    //if (result) console.log("ehm", result);
     //draw background
     //draw each player
     data.players.map(passedPlayer => {
@@ -45,11 +38,8 @@ function draw(data) {
             new Img(passedPlayer.img.src, passedPlayer.img.startRow, passedPlayer.img.startColumn, passedPlayer.img.rows, passedPlayer.img.columns, passedPlayer.img.speed, '', passedPlayer.img.currentRow, passedPlayer.img.currentColumn)
         );
         passedPlayer.draw(ctx);
-        //console.log(passedPlayer);
         if (player.username === passedPlayer.username) {
             player.img = passedPlayer.img;
-            //console.log("player", player);
-            //socket.emit("client update", {player: player});
         }
     });
     //draw objects
@@ -71,20 +61,16 @@ function fakeIt() {
 
 function drawCollectibles() {
     let length = collectibles.length;
-    //console.log("length",length);
     if (length) {
         collectibles = collectibles.filter(collectible => (collectible.y <= 500 && collectible.isColliding === false));
         if (collectibles.length < length) {
             collectiblesAmount -= length - collectibles.length;
-            //console.log("amount", collectiblesAmount);
         }
         collectibles.map(collectible => {
             collectible.y += collectible.speed;
             collectible.draw(ctx);
-            //console.log(collectible.isColliding);
         });
     }
-    //console.log("collcetibles amount", collectiblesAmount)
     if (collectiblesAmount === 0) {
         socket.emit("no collectibles left", {});
     }
@@ -107,8 +93,6 @@ function move(e) {
                 switchImage("start", character.left);
                 player.x -= 1 * player.speed;
                 checkSides();
-                //console.log("x",player.x);
-                //console.log("speed",player.speed);
                 break;
             case "D":
             case "d":
@@ -116,8 +100,6 @@ function move(e) {
                 switchImage("start", character.right);
                 player.x += 1 * player.speed;
                 checkSides();
-                //console.log("x",player.x);
-                //console.log("speed",player.speed);
                 break;
             default: 
                 //prevent unnecessary updates
@@ -146,5 +128,4 @@ function updateServer() {
 function checkSides() {
     if (player.x > 500 - player.width/2) player.x = 0 - player.width/2;
     if (player.x < 0 - player.width/2) player.x = 500 - player.width/2;
-    //console.log(player.x);
 }

@@ -1,4 +1,3 @@
-//const GameObject = require("../../public/models/GameObject").GameObject;
 const Collectible = require("../../public/models/Collectible").Collectible;
 const Img = require("../../public/models/Img").Img;
 const UtilsObject = require("./Utils").Utils;
@@ -19,7 +18,6 @@ const hint = new Img("./images/collectibles/hints.png", 0, 0, 1, 1, 0);
 class Game {
     constructor () {
         this.level = 1;
-        //this.time = 30;
         this.players = [];
         //whether game started
         this.on = false;
@@ -44,28 +42,20 @@ class Game {
             let amount = Utils.getRandomNumber(5, 10 + this.level * 2);
             for (let i = 0; i < amount; i++) {
                 collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, value, Utils.getRandomNumber(1, 5 + this.level), key))
-                //collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, value, Utils.getRandomNumber(1, this.level), key))
             }
         }
         //add hints
         this.song = this.getHints(song);
         this.songs.splice(song, 1);
-        console.log("songs", this.songs);
-        //this.songs.splice(song, 1);
-        console.log("song",this.song, this.song.length);
         this.song.map((arrayHint) => {
             collectibles.push(new Collectible(Utils.getRandomNumber(0,500 - CollectibleWidth), -CollectibleHeight, CollectibleWidth, CollectibleHeight, hint, Utils.getRandomNumber(1, 5 + this.level), "hint", arrayHint));
         });
         Utils.shuffleArray(collectibles);
-        //console.log(collectibles);
-        //console.log(collectibles);
         return collectibles;
     }
 
     getHints(song) {
-        //console.log(song);
         let hints = this.songs[song].split(",");
-        //maybe add length of the song or leave it as set
         return hints;
     }
 }
