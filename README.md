@@ -1,5 +1,7 @@
 # Music_Game
 
+Deployed version: https://music-collecting-game.herokuapp.com/
+
 Creative Code Exam Project - multiplayer game which contains sockets, canvas and some music.
 
 
