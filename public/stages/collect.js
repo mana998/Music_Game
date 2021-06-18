@@ -31,7 +31,6 @@ function draw(data) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     //detect collisions
     collectibles = player.detectCollisions(collectibles);
-    //draw background
     //draw each player
     data.players.map(passedPlayer => {
         passedPlayer = new Player(passedPlayer.x, passedPlayer.y, passedPlayer.width, passedPlayer.height, passedPlayer.username, 
@@ -50,6 +49,8 @@ function draw(data) {
     });
     //draw objects
     drawCollectibles();
+    //draw level
+    printText(20, "#248588", "right", `Level ${data.level}`, 490, 20);
 }
 
 socket.on("new collectible", (data) => {
