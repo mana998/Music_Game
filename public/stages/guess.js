@@ -86,7 +86,7 @@ function renderGuessingElement() {
             <div class="shop-item">
                 <img src="./images/collectibles/speed.png">
                 <span>Price: 20</span>
-                <button id="buy-speed-button" ${(player.coins < 20 || player.speed === 15) ? 'disabled' : ''} onClick="buySpeed();">BUY Speed</button>
+                <button id="buy-speed-button" ${(player.coins < 20 || player.speed === 15) ? 'disabled' : ''} onClick="buySpeed();">BUY SPEED</button>
             </div>
             <div class="shop-item">
                 <img src="./images/collectibles/hints.png">
