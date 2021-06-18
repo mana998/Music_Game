@@ -257,7 +257,6 @@ async function checkAnswers(data) {
             if (points < 0) {
                 player.health += points;
                 $(`#health-value`).text(player.health);
-                player.checkHealth();
             }
             $(`#points-value`).text(player.points);
         }
@@ -279,8 +278,11 @@ async function checkAnswers(data) {
     player.answer = [];
     player.hints = [];
     $(`#hints-value`).text(player.hints.length);
-    socket.emit("client update", {player: player});
-    socket.emit("start collecting", {stage: "new level"});
+    player.checkHealth();
+    if (player.health > 0) {
+        socket.emit("client update", {player: player});
+        socket.emit("start collecting", {stage: "new level"});
+    }
 }
 
 async function showGuessNote(note, index, points, song){
