@@ -40,6 +40,12 @@ function draw(data) {
         passedPlayer.draw(ctx);
         if (player.username === passedPlayer.username) {
             player.img = passedPlayer.img;
+            //show only if there are more players
+            if (data.players.length > 1) {
+                printText(15, "#248588", "center", player.username, player.x + player.width/2, player.y - 10);
+            }
+        } else {
+            printText(15, "#9fc5ac", "center", passedPlayer.username, passedPlayer.x + player.width/2, passedPlayer.y - 10);
         }
     });
     //draw objects
@@ -128,4 +134,12 @@ function updateServer() {
 function checkSides() {
     if (player.x > 500 - player.width/2) player.x = 0 - player.width/2;
     if (player.x < 0 - player.width/2) player.x = 500 - player.width/2;
+}
+
+//print text
+function printText(size, color, align, text, x, y) {
+    ctx.fillStyle = color;
+    ctx.textAlign = align;
+    ctx.font = `${size}px Trebuchet MS`;
+    ctx.fillText(text, x, y);
 }
