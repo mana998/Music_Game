@@ -1,3 +1,6 @@
+collectSound = new Sound(`./sounds/collect/collect.wav`);
+bombSound = new Sound(`./sounds/collect/bomb.wav`);
+
 class Player extends GameObject{
     constructor (x, y, width, height, username, img) {
         super(x, y, width, height, img);
@@ -23,18 +26,22 @@ class Player extends GameObject{
                     case "hint":
                         this.hints.push(collectible.value);
                         $(`#hints-value`).text(this.hints.length);
+                        collectSound.play();
                         break;
                     case "heart":
                         this.health += collectible.value;
                         $(`#health-value`).text(this.health);
+                        collectSound.play();
                         break;
                     case "coin":
                         this.coins += collectible.value;
                         $(`#coins-value`).text(this.coins);
+                        collectSound.play();
                         break;
                     case "hit":
                         this.health -= collectible.value;
                         $(`#health-value`).text(this.health);
+                        bombSound.play();
                         this.checkHealth();
                         break;
                 }
