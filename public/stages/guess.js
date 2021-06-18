@@ -187,11 +187,11 @@ function generateLengths(note) {
 
 function addNote(note, length) {
     $("body .length-block").remove();
-    player.answer.push(`${lengths[length]}${note}`);
     if (soundLength / row >= 16 && player.answer.length < songLength) {
         appendRow();
     }
     drawNote(note, length);
+    player.answer.push(`${lengths[length]}${note}`);
     soundLength += lengths[length];
     $("#current-length").text(player.answer.length);
     if (player.answer.length === songLength) {
