@@ -245,8 +245,8 @@ async function checkAnswers(data) {
     //for (guessingPlayer of data.players) {
         let guessingPlayer = data.players[i];
         let points = 0;
-        $(".points").text(points).css("color", "black");
-        $('.guessing-player').text(guessingPlayer.username);
+        $("#point").text(points).css("color", "black");
+        $('.guessing-player').text(`Player: ${guessingPlayer.username}`);
         await new Promise(resolve => setTimeout(resolve, 5000));
         let index = 0;
         for (note of guessingPlayer.answer) {
@@ -266,7 +266,7 @@ async function checkAnswers(data) {
     row = 0;
     soundLength = 0;
     appendRow();
-    $(".points").text(0).css("color", "black");
+    $("#point").text(0).css("color", "black");
     $('.guessing-player').text("CORRECT SONG");
     $('#guess .points').remove();
     let index = 0;
@@ -294,10 +294,10 @@ async function showGuessNote(note, index, points, song){
     if (typeof(points) === "number" && index > -1) {
         song[index] = song[index].replace("-", "rest");
         if (note === song[index]) {
-            $(".points").text(++points).css("color", "green");
+            $("#point").text(++points).css("color", "green");
             $(`#answer${row}`).children().last().css("filter", "brightness(5) hue-rotate(142deg) contrast(1) saturate(6)")
         } else {
-            $(".points").text(--points).css("color", "red");
+            $("#point").text(--points).css("color", "red");
             $(`#answer${row}`).children().last().css("filter", "brightness(4.5) hue-rotate(16deg) contrast(0.75) saturate(10)")
         }
     }
