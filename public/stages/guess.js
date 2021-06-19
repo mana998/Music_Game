@@ -17,7 +17,7 @@ let soundLength;
 
 (function loadSounds() {
     for (note of notes) {
-        for (let length in lengths) {
+        for (const length in lengths) {
             if (!note.includes("rest") && !length.includes("dotted")){
                 sounds[`${lengths[length]}${note}`] = new Sound(`./sounds/notes/${lengths[length]}${note}.mp3`);
             }
@@ -32,6 +32,7 @@ socket.on("guess", (data) => {
     row = 0;
     soundLength = 0;
     songLength = data.length;
+    collecting = false;
     //hide canvas
     $("#canvas").hide();
     //add guessing screen
@@ -138,7 +139,7 @@ async function play() {
 }
 
 async function playOne(note) {
-    let duration = note.replace(/(\d(\.\d)?)[a-z1-9]*/, '$1') / 2;
+    const duration = note.replace(/(\d(\.\d)?)[a-z1-9]*/, '$1') / 2;
     await playNote(note, duration);
 }
 
@@ -160,10 +161,10 @@ function renderOption(note) {
 }
 
 function renderHint(hint) {
-    let position = hint.split('.')[0];
+    const position = hint.split('.')[0];
     let duration = hint.replace(/\d*\.([0-9.]+).+/, "$1");
     duration = Object.keys(lengths).find(key => lengths[key] === Number(duration));
-    let note = hint.replace(/\d*\.[0-9.]+(.+)/, "$1");
+    const note = hint.replace(/\d*\.[0-9.]+(.+)/, "$1");
     $(`#hint-note-${position}`).text(note !== "-" ? note.toUpperCase() : "REST");
     $(`#hint-duration-${position}`).text(duration);
 }
@@ -174,7 +175,7 @@ function selectLength(note) {
 
 function generateLengths(note) {
     let lengthBlock = `<div class="length-block">`;
-    for (let length in lengths) {
+    for (const length in lengths) {
         if (note.includes("rest") && !length.includes("dotted")) {
             lengthBlock += `<img src="./images/notes/${lengths[length]}rest.png" onClick="addNote('${note}', '${length}')"></img>`;
         } else if (!note.includes("rest")){
@@ -243,7 +244,7 @@ async function checkAnswers(data) {
         soundLength = 0;
         appendRow();
     //for (guessingPlayer of data.players) {
-        let guessingPlayer = data.players[i];
+        const guessingPlayer = data.players[i];
         let points = 0;
         $("#point").text(points).css("color", "black");
         $('.guessing-player').text(`Player: ${guessingPlayer.username}`);

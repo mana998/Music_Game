@@ -30,7 +30,7 @@ const Utils = new UtilsObject();
 
 //collectible items
 //initialize for 1st level
-let currentColletibles = [];
+//let currentColletibles = [];
 
 //interval timer
 let timer;
@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
     //player update
     socket.on("client update", (data) => {
         //find player with same username
-        let player = gameState.players.find(player => player.username === data.player.username);
+        const player = gameState.players.find(player => player.username === data.player.username);
         //replace with new data
         gameState.players[gameState.players.indexOf(player)] = data.player;
     })
@@ -121,8 +121,8 @@ io.on("connection", (socket) => {
     })
 
     socket.on("get hint", (data) => {
-        let unusedHints = gameState.song.filter((hint) => !data.hints.includes(hint));
-        let hint = unusedHints[Utils.getRandomNumber(0, unusedHints.length, true)];
+        const unusedHints = gameState.song.filter((hint) => !data.hints.includes(hint));
+        const hint = unusedHints[Utils.getRandomNumber(0, unusedHints.length, true)];
         socket.emit("new hint", {hint: hint});
     })
 
@@ -151,12 +151,12 @@ io.on("connection", (socket) => {
 
 async function generateCollectible() {
     if (gameState) {
-        let item = collectibles.shift();
+        const item = collectibles.shift();
         //set custom timeout for each collectible
         //min and max limit depends on level
-        let random = Utils.getRandomNumber(6 - gameState.level / 3, (10 - gameState.level / 3))*1000;
+        const random = Utils.getRandomNumber(6 - gameState.level / 3, (10 - gameState.level / 3))*1000;
         await new Promise(resolve => setTimeout(resolve, random));
-        currentColletibles.push(item);
+        //currentColletibles.push(item);
         io.to('playing').emit("new collectible", {collectible: item});
         if (collectibles.length) {
             generateCollectible();

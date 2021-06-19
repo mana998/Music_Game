@@ -1,5 +1,3 @@
-//answered to start a game
-let answered = false;
 let collecting = false;
 
 function showFirstInfo() {
@@ -50,7 +48,7 @@ function selectCharacter(i) {
 }
 
 function setupPlayer() {
-    let username = $("#username-input").val();
+    const username = $("#username-input").val();
     if (username) {
         if (jQuery.isEmptyObject(character)) {
             selectCharacter(0);
@@ -59,9 +57,9 @@ function setupPlayer() {
         $(".character-input").removeAttr("onclick");
         $(`.character-label`).removeClass("enabled");
         //select img
-        let img = new Image();
+        const img = new Image();
         img.src = "./images/character/bard.png";
-        let initial = new Img("./images/character/bard.png", character.right[0], character.right[1], 0, 2, 1);
+        const initial = new Img("./images/character/bard.png", character.right[0], character.right[1], 0, 2, 1);
         player = new Player(
             canvas.width/2, canvas.height - characterHeight, 
             32, 32,
@@ -89,7 +87,6 @@ function confirmStart(state) {
         socket.emit("start collecting", {});
         $(".start-button").attr("disabled", true);
         $(".new-player").append(`<p class="waiting">Waiting for other players</p>`)
-        collecting = true;
     }
 }
 

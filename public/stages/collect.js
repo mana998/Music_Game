@@ -21,6 +21,7 @@ socket.on('gameState change', (data) => {
 
 //set collectible amount
 socket.on('collectibles amount', (data) => {
+    collecting = true;
     $(".start-button").hide()
     $(".character-choice").hide();
     collectiblesAmount = data.amount;
@@ -54,7 +55,7 @@ function draw(data) {
 }
 
 socket.on("new collectible", (data) => {
-    let collectible = new Collectible(data.collectible.x, data.collectible.y, data.collectible.width, data.collectible.height, 
+    const collectible = new Collectible(data.collectible.x, data.collectible.y, data.collectible.width, data.collectible.height, 
         new Img(data.collectible.img.src, data.collectible.img.startRow, data.collectible.img.startColumn, data.collectible.img.rows, data.collectible.img.columns, data.collectible.img.speed),
         data.collectible.speed, data.collectible.type, data.collectible.value)
     ;
@@ -67,7 +68,7 @@ function fakeIt() {
 }
 
 function drawCollectibles() {
-    let length = collectibles.length;
+    const length = collectibles.length;
     if (length) {
         collectibles = collectibles.filter(collectible => (collectible.y <= 500 && collectible.isColliding === false));
         if (collectibles.length < length) {
