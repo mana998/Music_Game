@@ -78,6 +78,10 @@ io.on("connection", (socket) => {
     socket.on("start collecting", (data) => {
         answered++;
         if (answered === gameState.players.length) {
+            //order according to score
+            gameState.players.sort((first, second) => {
+                return second.points - first.points;
+            });
             if (!gameState.on) {
                 gameState.on = true;
                 collectibles = gameState.generateCollectibles(Utils.getRandomNumber(0, gameState.songs.length, 1));
