@@ -67,10 +67,12 @@ io.on("connection", (socket) => {
 
     //player update
     socket.on("client update", (data) => {
-        //find player with same username
-        const player = gameState.players.find(player => player.username === data.player.username);
-        //replace with new data
-        gameState.players[gameState.players.indexOf(player)] = data.player;
+        if (gameState.players) {
+            //find player with same username
+            const player = gameState.players.find(player => player.username === data.player.username);
+            //replace with new data
+            gameState.players[gameState.players.indexOf(player)] = data.player;
+        }
     })
 
     socket.on("start collecting", (data) => {
@@ -127,7 +129,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on("client lost", (data) => {
-        gameState.players.splice(gameState.players.indexOf(data.player), 1);
+        gameState.players = gameState.players.filter((player) => player.username !== data.player.username);
         socket.leave('playing');
         socket.emit("game over");
         if (gameState.players.length === 0) {
