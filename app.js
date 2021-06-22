@@ -62,6 +62,7 @@ io.on("connection", (socket) => {
             gameState.players.push(data.player);
             socket.join('playing');
             io.emit("server new player", {stage: gameState.stage, player: data.player});
+            socket.emit("player ready");
         }
     })
 

@@ -49,6 +49,7 @@ function selectCharacter(i) {
 
 function setupPlayer() {
     const username = $("#username-input").val();
+    $(".info-text").remove();
     if (username) {
         if (jQuery.isEmptyObject(character)) {
             selectCharacter(0);
@@ -68,7 +69,6 @@ function setupPlayer() {
         );
         //send data to the server
         socket.emit("client new player", {player: player});
-        player.showCollectibles();
     }
 }
 
@@ -95,10 +95,24 @@ socket.on("game in progress", () => {
 });
 
 function renderWait() {
-    return `<div class="wait"
+    return `<div class="info-text wait">
         <p>Game already in progress.</br>Please wait till the current game finishes.<br>(Refresh the page and try again later.)</p>
     </div>`
 }
+
+socket.on("duplicate name", () => {
+    $("main").append(renderDuplicate());
+})
+
+function renderDuplicate() {
+    return `<div class="info-text duplicate">
+        <p>This username is already in use, please try another one.</p>
+    </div>`
+}
+
+socket.on("player ready", (data) => {
+    player.showCollectibles();
+})
 
 socket.on("game over", () => {
     $("main").empty();
