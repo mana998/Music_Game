@@ -56,6 +56,8 @@ io.on("connection", (socket) => {
             socket.emit("game in progress");
         } else if (gameState.players.some((player) => player.username === data.player.username)){
             socket.emit("duplicate name", {username: data.player.username});
+        } else if (data.player.username === ""){
+            socket.emit("empty name", {username: data.player.username});
         } else {
             //add player to active players
             sockets[socket.id] = data.player.username;

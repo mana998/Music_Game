@@ -110,6 +110,16 @@ function renderDuplicate() {
     </div>`
 }
 
+socket.on("empty name", () => {
+    $("main").append(renderEmpy());
+})
+
+function renderEmpty() {
+    return `<div class="info-text empty">
+        <p>Please insert your username.</p>
+    </div>`
+}
+
 socket.on("player ready", (data) => {
     player.showCollectibles();
 })
